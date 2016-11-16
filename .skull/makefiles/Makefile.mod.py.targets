@@ -1,0 +1,22 @@
+# Required Targets
+$(TARGET): prepare
+	python -m compileall .
+
+prepare:
+
+check: $(TARGET)
+
+valgrind-check: $(TARGET)
+
+deploy:
+	test -d $(DEPLOY_DIR) || mkdir -p $(DEPLOY_DIR)
+	test -d $(DEPLOY_DIR)/etc || mkdir -p $(DEPLOY_DIR)/etc
+	test -d $(MODULE_DIR) || mkdir -p $(MODULE_DIR)
+	touch $(MODULE_PARENT_DIR)/__init__.py
+	cp -f config.yaml $(DEPLOY_DIR)/etc/$(CONF_TARGET)
+	cp -rf ./* $(MODULE_DIR)
+
+clean:
+	rm -f ./*.pyc
+
+.PHONY: prepare check valgrind-check deploy clean

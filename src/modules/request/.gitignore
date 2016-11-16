@@ -1,0 +1,11 @@
+# generated config wrapper files
+config.*
+
+# module lib folder
+lib/*
+
+# compiled file for ycm
+.ycm_extra_conf.pyc
+
+# python compiled files
+*.pyc

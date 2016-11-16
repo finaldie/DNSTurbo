@@ -1,0 +1,16 @@
+module:
+    type: static
+    metrics:
+        request:
+            desc: module request counter
+        response:
+            desc: module response counter
+
+# Every transaction has its own counters
+transaction:
+    type: dynamic
+    metrics:
+        request:
+            desc: transaction request count
+        response:
+            desc: transaction response count

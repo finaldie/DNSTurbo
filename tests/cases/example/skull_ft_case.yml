@@ -1,0 +1,52 @@
+##
+# This is an exmaple FT case, feel free to modify/copy/add a new case based on it
+#
+# * Basic Tags
+#  'description' - Write description for this case
+#  'pre-run'     - Execute commands before 'run' tag. Generally for building project
+#  'run'         - Run test case. Generally for start the program
+#  'verify'      - Verify the results are all as our expected
+#  'post-verify' - Execute commands after 'verify'. Generally cleanup the environment
+#
+# * Basic Macros (Use these macros instead of write the absolute path)
+#  {COMMON} - This stands for the '$project/tests/common' folder
+#  {RUN}    - This stands for the '$project/tests/run/$caseName/' folder
+#  {CASE}   - This stands for the '$project/tests/cases/$caseName' folder
+#
+# * Start Location
+#  When users run `skull build ft-check`, it will invoke the tests/Makefile to
+#   execute the FT cases, and for each case, the framework will goto the
+#   '$project/tests/run/$caseName' folder first, then run the case
+#
+# * Existing Scripts
+#  skullft_mock_ep  - This script can help user to setup a mock end point easily
+#                     Run `skullft_mock_ep -h` for the help
+#
+
+description: An example test case, deploy the current project, then verify there is no errors during the testing
+
+pre-run:
+    - echo "pre-run"
+    - skull build && skull build check && skull build valgrind-check
+    - skull deploy ./project
+
+run:
+    - echo "run"
+    - cd project && skull start ./ -D
+    - sleep 1
+
+verify:
+    - echo "verify"
+    - echo "hello skull" | nc 127.0.0.1 7758 -i 1 | grep "hello skull"
+    - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
+    - 'cat ${RUN}/project/log/skull.log | grep "receive data: hello skull"'
+    - 'cat ${RUN}/project/log/skull.log | grep "module_pack(test): data sz:12"'
+    - 'cat ${RUN}/project/log/skull.log | grep "config test_item: 123"'
+    - 'cat ${RUN}/project/log/skull.log | grep "config test_rate: 1"'
+    - 'cat ${RUN}/project/log/skull.log | grep "config test_name: module"'
+    - 'cat ${RUN}/project/log/skull.log | grep "config test_bool: 1"'
+    - 'echo "metrics" | nc 127.0.0.1 7759 | grep "global.response: 1"'
+
+post-verify:
+    - echo "post-verify"
+    - killall skull-engine || exit 0

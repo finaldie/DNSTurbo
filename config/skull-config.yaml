@@ -1,0 +1,75 @@
+
+##
+# Skull-Engine Top Config
+##
+
+# How many worker threads
+worker_threads: 1
+
+# How many background IO threads
+bg_iothreads: 1
+
+# Command port, which is used for exposing more skull information
+command_port: 7759
+
+# Log File Name
+log_name: skull.log
+
+##
+# Log Level
+#   trace, debug, info. warn, error, fatal are available
+#
+log_level: debug
+
+# Supported Languages: cpp, py
+languages: ['cpp', 'py']
+
+##
+# Max open file limitation
+#  By default, this value is depend on the ulimit of the process
+#  If failed to set due to permission reason, will fallback to the default value
+#
+#max_fds: 65535
+
+
+##
+# Skull Workflows
+# Example:
+#
+#     workflows:
+#      - concurrent: 1
+#        idl: example
+#        modules: ['test:cpp']
+#        port: 7758
+#        stdin: 0
+#        #bind: 0.0.0.0
+         #sock_type: tcp
+#        #timeout: 100
+#
+# The 'bind' item is optional, and by default it will bind to '127.0.0.1'
+# The 'sock_type' item is optional, specific 'tcp' or 'udp'. By default is 'tcp'
+# The 'timeout' item is optional, it controls the transaction timeout,
+#   unit is milliseconds, and by default is 0 (no timeout)
+#
+workflows:
+- concurrent: 1
+  idl: dnstxn
+  modules: ['request:py', 'dns_ask:py', 'ranking:py', 'response:py']
+  port: 7758
+  sock_type: udp
+  stdin: 0
+
+
+##
+# Skull Services
+# Example:
+#
+#     services:
+#       foo: {data_mode: rw-pr, enable: 'true', type: cpp}
+#
+# The 'foo' is service name, and there is also an optional item 'max_qsize',
+#   it controls the max service task queue size, by default is 1024
+#
+services:
+  dns: {data_mode: rw-pr, enable: 'true', type: cpp}
+

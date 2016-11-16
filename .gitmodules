@@ -1,0 +1,3 @@
+[submodule "src/services/dns"]
+	path = src/services/dns
+	url = git@github.com:finaldie/skull-service-dns.git
