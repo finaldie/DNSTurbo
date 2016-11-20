@@ -9,5 +9,14 @@
 package skull.workflow;
 
 message dnstxn {
-    optional bytes data = 1;
+    optional string    question   = 1;
+    optional int32     request_id = 2;
+    optional bytes     rawRequest = 3;
+    repeated DnsRecord record     = 4;
+    repeated DnsRecord record_returned = 5;
+}
+
+message DnsRecord {
+    optional string ip  = 1;
+    optional int32  ttl = 2;
 }

@@ -1,6 +1,6 @@
 # Required Targets
 $(TARGET): prepare
-	python -m compileall .
+	@python -m compileall . > /dev/null
 
 prepare:
 

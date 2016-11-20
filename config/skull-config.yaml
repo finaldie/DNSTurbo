@@ -55,7 +55,7 @@ workflows:
 - concurrent: 1
   idl: dnstxn
   modules: ['request:py', 'dns_ask:py', 'ranking:py', 'response:py']
-  port: 7758
+  port: 53
   sock_type: udp
   stdin: 0
 

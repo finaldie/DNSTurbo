@@ -1,6 +1,3 @@
-# generated config wrapper files
-config.*
-
 # module lib folder
 lib/*
 
