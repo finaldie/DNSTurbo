@@ -35,5 +35,5 @@ def module_release():
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    Logger.debug("py module run")
+    #Logger.debug("py module run")
     return True

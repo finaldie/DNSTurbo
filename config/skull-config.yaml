@@ -19,7 +19,7 @@ log_name: skull.log
 # Log Level
 #   trace, debug, info. warn, error, fatal are available
 #
-log_level: debug
+log_level: info
 
 # Supported Languages: cpp, py
 languages: ['cpp', 'py']
@@ -43,7 +43,7 @@ languages: ['cpp', 'py']
 #        port: 7758
 #        stdin: 0
 #        #bind: 0.0.0.0
-         #sock_type: tcp
+#        #sock_type: tcp
 #        #timeout: 100
 #
 # The 'bind' item is optional, and by default it will bind to '127.0.0.1'
@@ -56,6 +56,7 @@ workflows:
   idl: dnstxn
   modules: ['request:py', 'dns_ask:py', 'ranking:py', 'response:py']
   port: 53
+  bind: 0.0.0.0
   sock_type: udp
   stdin: 0
 

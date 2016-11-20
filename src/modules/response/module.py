@@ -17,7 +17,7 @@ from dnslib import *
 # @param config  A parsed yamlObj
 #
 def module_init(config):
-    Logger.debug("py module init")
+    Logger.debug("Response module init")
     Logger.info('0', 'config: {}'.format(pprint.pformat(config)))
     return
 
@@ -25,7 +25,7 @@ def module_init(config):
 # Module Release Function, be called when shutdown phase
 #
 def module_release():
-    Logger.debug("py module release")
+    Logger.debug("Response module release")
     return
 
 ##
@@ -39,7 +39,7 @@ def module_release():
 # @return How many bytes be consumed
 #
 def module_pack(txn, txndata):
-    Logger.debug("response module pack")
+    #Logger.debug("response module pack")
 
     sharedData = txn.data()
     req      = DNSRecord.parse(sharedData.rawRequest)
@@ -51,19 +51,25 @@ def module_pack(txn, txndata):
 
     # Assemble response
     if txn.status() != Txn.Txn.TXN_OK:
-        Logger.error('ModulePack', 'error occurred', 'Please check previous errors/exceptions')
+        Logger.error('ModulePack', 'Error occurred, no answer for question: {}'.format(question),
+                'Please check previous errors/exceptions')
 
         # Increase error counter
         module_counter.error.inc(1)
         domain_counter.error.inc(1)
     else:
         # Assemble DNS response
+        nanswers = len(sharedData.record)
+        ips = []
+
         for record in sharedData.record:
             answer.add_answer(RR(question, QTYPE.A, rdata = A(record.ip), ttl=record.ttl))
+            ips.append(record.ip)
 
         # Increase response counter
         module_counter.response.inc(1)
         domain_counter.response.inc(1)
+        Logger.info('ModulePack', 'Question: {} {} Answers: {}'.format(question, nanswers, ips))
 
     txndata.append(answer.pack())
 
@@ -76,5 +82,5 @@ def module_pack(txn, txndata):
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    Logger.debug("response module run")
+    #Logger.debug("response module run")
     return True

@@ -41,7 +41,7 @@ def module_release():
 #         - < 0: Error occurred
 #
 def module_unpack(txn, data):
-    Logger.debug("request module unpack")
+    #Logger.debug("request module unpack")
 
     # Parse dns request
     request = DNSRecord.parse(data)
@@ -51,7 +51,7 @@ def module_unpack(txn, data):
 
     rawRecord = DNSRecord(DNSHeader(id=request_id, qr=1, aa=1, ra=1), q=request.q)
 
-    Logger.debug("question: {}, type: {}, {}".format(question, question_type, QTYPE[question_type]))
+    #Logger.debug("question: {}, type: {}, {}".format(question, question_type, QTYPE[question_type]))
 
     # Store data into txn sharedData
     sharedData = txn.data()
@@ -76,5 +76,4 @@ def module_unpack(txn, data):
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    Logger.debug("request module run")
     return True

@@ -35,7 +35,7 @@ def module_release():
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    Logger.debug("dns_ask module run")
+    #Logger.debug("dns_ask module run")
 
     sharedData = txn.data()
     question = sharedData.question
@@ -50,7 +50,7 @@ def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
     sharedData = txn.data()
 
     for record in response_msg.record:
-        Logger.debug("got ip: {}, ttl: {}".format(record.ip, record.ttl))
+        #Logger.debug("got ip: {}, ttl: {}".format(record.ip, record.ttl))
         sharedData.record.add(ip = record.ip, ttl = record.ttl)
 
     return True
