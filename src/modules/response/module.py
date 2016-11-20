@@ -45,13 +45,14 @@ def module_pack(txn, txndata):
     req      = DNSRecord.parse(sharedData.rawRequest)
     answer   = req.reply()
     question = sharedData.question
+    qtype    = QTYPE[req.q.qtype]
 
     module_counter = Metrics.module()
     domain_counter = Metrics.domain(question)
 
     # Assemble response
     if txn.status() != Txn.Txn.TXN_OK:
-        Logger.error('ModulePack', 'Error occurred, no answer for question: {}'.format(question),
+        Logger.error('ModulePack', 'Error occurred, no answer for question: {}, type: {}'.format(question, qtype),
                 'Please check previous errors/exceptions')
 
         # Increase error counter
@@ -69,7 +70,7 @@ def module_pack(txn, txndata):
         # Increase response counter
         module_counter.response.inc(1)
         domain_counter.response.inc(1)
-        Logger.info('ModulePack', 'Question: {} {} Answers: {}'.format(question, nanswers, ips))
+        Logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {}'.format(question, qtype, nanswers, ips))
 
     txndata.append(answer.pack())
 
