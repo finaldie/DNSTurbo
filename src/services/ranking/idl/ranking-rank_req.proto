@@ -1,0 +1,20 @@
+// This is created by framework
+// Notes:
+//  - Top message is the main message structure we use, if you want to define
+//     some sub-messages, write them after the top message
+//  - Do not recommend to use 'requried' field, if you really want to use it,
+//     make sure it be filled
+
+package skull.service.ranking;
+
+message rank_req {
+    optional string question  = 1;
+    optional int32  qtype     = 2; // 1: A, 2: AAAA
+
+    repeated RankingRecord rRecord = 3;
+}
+
+message RankingRecord {
+    optional string ip          = 1;
+    optional int32  expiredTime = 2;
+}

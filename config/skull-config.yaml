@@ -21,6 +21,12 @@ log_name: skull.log
 #
 log_level: info
 
+##
+# Transaction Logging
+#   Enable to see the detail execution flow of each transaction
+#
+#txn_logging: false
+
 # Supported Languages: cpp, py
 languages: ['cpp', 'py']
 
@@ -52,11 +58,11 @@ languages: ['cpp', 'py']
 #   unit is milliseconds, and by default is 0 (no timeout)
 #
 workflows:
-- concurrent: 1
+- bind: 0.0.0.0
+  concurrent: 1
   idl: dnstxn
   modules: ['request:py', 'dns_ask:py', 'ranking:py', 'response:py']
   port: 53
-  bind: 0.0.0.0
   sock_type: udp
   stdin: 0
 
@@ -73,4 +79,5 @@ workflows:
 #
 services:
   dns: {data_mode: rw-pr, enable: 'true', type: cpp}
+  ranking: {data_mode: rw-pr, enable: 'true', type: cpp}
 

@@ -1,0 +1,17 @@
+// This is created by framework
+// Notes:
+//  - Top message is the main message structure we use, if you want to define
+//     some sub-messages, write them after the top message
+//  - Do not use 'requried' field
+
+package skull.service.ranking;
+
+message rank_resp {
+    repeated RankingResult result = 1;
+}
+
+message RankingResult {
+    optional string ip    = 1;
+    optional int32  ttl   = 2;
+    optional double score = 3; // Value in [0.0, 1.0]
+}

@@ -1,5 +1,6 @@
 import yaml
 import pprint
+import time
 
 from skullpy import txn     as Txn
 from skullpy import txndata as TxnData
@@ -35,5 +36,24 @@ def module_release():
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    #Logger.debug("py module run")
+    sharedData = txn.data()
+    question = sharedData.question
+
+    rank_query = service_ranking_rank_req_pto.rank_req()
+    rank_query.question = question
+    rank_query.qtype = 1
+
+    for record in sharedData.record:
+        rank_query.rRecord.add(ip = record.ip, expiredTime = int(time.time()) + record.ttl)
+
+    ret = txn.iocall('ranking', 'rank', rank_query, 0, _ranking_response)
+
+    return True
+
+def _ranking_response(txn, iostatus, api_name, request_msg, response_msg):
+    sharedData = txn.data()
+
+    for record in response_msg.result:
+        print "record: {}".format(record)
+
     return True
