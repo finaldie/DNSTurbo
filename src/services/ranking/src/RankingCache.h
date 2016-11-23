@@ -15,11 +15,18 @@ public:
         AAAA = 2
     } QTYPE;
 
+    typedef struct HttpInfo {
+        int status_;
+        int httpCode_;
+        int latency_;
+    } HttpInfo;
+
     typedef struct RankingRecord {
         std::string ip_;
         QTYPE       qtype_;
         time_t      expiredTime_;
-        double      score_;
+
+        std::vector<HttpInfo> httpInfo_;
     } RankingRecord;
 
     typedef std::vector<RankingRecord> RankingRecords;
@@ -33,13 +40,22 @@ public:
     ~RankingCache();
 
 public:
-    void rank(const skullcpp::Service& service, const std::string& question,
-            const RankingRecords&) const;
+    void addIntoCache(const std::string& question, const RankingRecords&);
 
     void rankResult(const std::string& question, RankingRecords&) const;
 
+    int  cleanup();
+
+    void doSpeedTest(const skullcpp::Service& service) const;
+
+    bool updateRankResult(const std::string& question, const std::string& ip,
+                          int status, int httpCode, int latency);
+
+    const std::string dumpCache() const;
+
 private:
-    bool updateRankResult(const std::string& ip, double score, RankingRecords&) const;
+    bool updateRankResult(const RankingRecord&, RankingRecords&) const;
+    int  updateCacheRecords(const RankingRecords& latest, RankingRecords& curr);
 };
 
 #endif

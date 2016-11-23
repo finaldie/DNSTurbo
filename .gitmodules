@@ -1,3 +1,6 @@
 [submodule "src/services/dns"]
 	path = src/services/dns
 	url = git://github.com/finaldie/skull-service-dns.git
+[submodule "deps/http-parser"]
+	path = deps/http-parser
+	url = git://github.com/nodejs/http-parser.git

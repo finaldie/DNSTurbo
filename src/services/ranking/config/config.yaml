@@ -6,3 +6,5 @@
 #   test_name: module
 #   test_bool: true
 #
+
+cleanup_interval: 60000 # 60s

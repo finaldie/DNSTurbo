@@ -12,49 +12,54 @@ HttpRequest::HttpRequest() : hasConnectionHeader(false), hasAcceptHeader(false),
 HttpRequest::~HttpRequest() {
 }
 
-bool HttpRequest::parse(const google::protobuf::Message& request) {
-    const auto& query = (skull::service::http::query_req&)request;
+void HttpRequest::setMethod(const std::string& method) {
+    this->method_ = method.empty() ? "GET" : method;
+}
 
-    // Extract query items
-    this->method_  = query.has_method()  ? query.method()  : "GET";
-    this->uri_     = query.has_uri()     ? query.uri()     : "";
-    this->body_    = query.has_body()    ? query.body()    : "";
+void HttpRequest::setURI(const std::string& uri) {
+    this->uri_ = uri;
+}
 
-    HttpReqHdrMap headers;
-    int headerSz = query.header_size();
-    for (int i = 0; i < headerSz; i++) {
-        const auto& headerItem = query.header(i);
+void HttpRequest::setBody(const std::string& body) {
+    this->body_ = body;
+}
 
-        if (!headerItem.has_name() || !headerItem.name().empty()) {
+void HttpRequest::setHeaders(const HttpReqHdrMap& headerMap) {
+    if (headerMap.empty()) {
+        return;
+    }
+
+    for (const auto& headerItem : headerMap) {
+        const auto& name  = headerItem.first;
+        const auto& value = headerItem.second;
+
+        if (name.empty()) {
             continue;
         }
 
-        if (!headerItem.has_value() || headerItem.value().empty()) {
+        if (value.empty()) {
             continue;
         }
 
         // Filter Content-Length header, will re-calculate base on body
-        if (headerItem.name() == "Content-Length") {
+        if (name == "Content-Length") {
             continue;
         }
 
-        if (headerItem.name() == "Connection") {
+        if (name == "Connection") {
             this->hasConnectionHeader = true;
         }
 
-        if (headerItem.name() == "Accept") {
+        if (name == "Accept") {
             this->hasAcceptHeader = true;
         }
 
-        if (headerItem.name() == "Accept-Charset") {
+        if (name == "Accept-Charset") {
             this->hasAcceptCharsetHeader = true;
         }
 
-        headers.insert(std::pair<std::string, std::string>(headerItem.name(), headerItem.value()));
+        this->headers_.insert(std::make_pair(name, value));
     }
-
-    // Validate Request
-    return this->validate();
 }
 
 bool HttpRequest::validate() const {

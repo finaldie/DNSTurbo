@@ -60,10 +60,10 @@ def module_pack(txn, txndata):
         domain_counter.error.inc(1)
     else:
         # Assemble DNS response
-        nanswers = len(sharedData.record)
+        nanswers = len(sharedData.rankingRecord)
         ips = []
 
-        for record in sharedData.record:
+        for record in sharedData.rankingRecord:
             answer.add_answer(RR(question, QTYPE.A, rdata = A(record.ip), ttl=record.ttl))
             ips.append(record.ip)
 

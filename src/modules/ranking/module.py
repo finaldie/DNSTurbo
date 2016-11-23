@@ -52,8 +52,9 @@ def module_run(txn):
 
 def _ranking_response(txn, iostatus, api_name, request_msg, response_msg):
     sharedData = txn.data()
+    print "response: {}".format(response_msg)
 
     for record in response_msg.result:
-        print "record: {}".format(record)
+        sharedData.rankingRecord.add(ip = record.ip, ttl = record.ttl)
 
     return True

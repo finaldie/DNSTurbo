@@ -13,5 +13,11 @@ message rank_resp {
 message RankingResult {
     optional string ip    = 1;
     optional int32  ttl   = 2;
-    optional double score = 3; // Value in [0.0, 1.0]
+    repeated HttpInfo http_info = 4;
+}
+
+message HttpInfo {
+    optional int32 status   = 1;
+    optional int32 httpCode = 2;
+    optional int32 latency  = 3;
 }

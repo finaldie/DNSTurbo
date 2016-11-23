@@ -10,7 +10,42 @@
 
 #include "RankingCache.h"
 
+#define RANKING_CACHE_CLEANUP_INTERVAL (60 * 1000)
+#define RANKING_CACHE_RANK_INTERVAL    (10 * 1000)
+
 using namespace skull::service::ranking;
+
+/**************************** Internal APIs ***********************************/
+static
+void _rankingRecordUpdating(skullcpp::Service& service,
+                            const std::string& question,
+                            const RankingCache::RankingRecords& records) {
+    auto* cache = (RankingCache*)service.get();
+    cache->addIntoCache(question, records);
+}
+
+static
+void _rankingCacheCleanup(skullcpp::Service& service) {
+    const auto& config = skullcpp::Config::instance();
+    auto* cache = (RankingCache*)service.get();
+    int cleaned = cache->cleanup();
+
+    SKULLCPP_LOG_INFO("RankingCache", "Clean up " << cleaned << " records");
+
+    // Set up a clean up job
+    service.createJob((uint32_t)config.cleanup_interval(), 1,
+                      skull_BindSvcJobNPW(_rankingCacheCleanup), NULL);
+}
+
+static
+void _rankingCacheSpeedTest(const skullcpp::Service& service) {
+    const auto* cache = (const RankingCache*)service.get();
+    cache->doSpeedTest(service);
+
+    // Set up a ranking job
+    service.createJob(RANKING_CACHE_RANK_INTERVAL, 1,
+                      skull_BindSvcJobNPR(_rankingCacheSpeedTest), NULL);
+}
 
 // ====================== Service Init/Release =================================
 /**
@@ -26,6 +61,16 @@ void skull_service_init(skullcpp::Service& service, const skull_config_t* config
 
     // Set Ranking Cache
     service.set(new RankingCache());
+
+    // Set up a clean up job
+    const auto& conf = skullcpp::Config::instance();
+
+    service.createJob((uint32_t)conf.cleanup_interval(), 1,
+                      skull_BindSvcJobNPW(_rankingCacheCleanup), NULL);
+
+    // Set up a ranking job
+    service.createJob(RANKING_CACHE_RANK_INTERVAL, 1,
+                      skull_BindSvcJobNPR(_rankingCacheSpeedTest), NULL);
 }
 
 /**
@@ -35,6 +80,7 @@ static
 void skull_service_release(skullcpp::Service& service)
 {
     SKULLCPP_LOG_INFO("svc.ranking", "Skull service releasd");
+
 }
 
 /**************************** Service APIs Calls *******************************
@@ -72,13 +118,12 @@ void ranking(const skullcpp::Service& service,
                                 ? RankingCache::QTYPE::A
                                 : RankingCache::QTYPE::AAAA;
         rankRecord.expiredTime_ = record.expiredtime();
-        rankRecord.score_ = 0.0f;
 
         records.push_back(rankRecord);
     }
 
-    // Rank it
-    rankingCache->rank(service, rankReq.question(), records);
+    // Rank it via a service job
+    service.createJob(0, 1, skull_BindSvcJobNPW(_rankingRecordUpdating, rankReq.question(), records), NULL);
 
     // Get Ranking Results
     rankingCache->rankResult(rankReq.question(), records);
@@ -90,7 +135,13 @@ void ranking(const skullcpp::Service& service,
         auto* res = rankResp.add_result();
         res->set_ip(result.ip_);
         res->set_ttl((int)(result.expiredTime_ - now));
-        res->set_score(result.score_);
+
+        for (const auto& httpInfo : result.httpInfo_) {
+            auto* info = res->add_http_info();
+            info->set_status(httpInfo.status_);
+            info->set_httpcode(httpInfo.httpCode_);
+            info->set_latency(httpInfo.latency_);
+        }
     }
 }
 

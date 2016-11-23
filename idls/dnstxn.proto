@@ -9,11 +9,11 @@
 package skull.workflow;
 
 message dnstxn {
-    optional string    question   = 1;
-    optional int32     request_id = 2;
-    optional bytes     rawRequest = 3;
-    repeated DnsRecord record     = 4;
-    repeated DnsRecord record_returned = 5;
+    optional string    question      = 1;
+    optional int32     request_id    = 2;
+    optional bytes     rawRequest    = 3;
+    repeated DnsRecord record        = 4;
+    repeated DnsRecord rankingRecord = 5;
 }
 
 message DnsRecord {

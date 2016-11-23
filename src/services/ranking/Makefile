@@ -3,18 +3,23 @@ include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.cpp.inc
 
 INC += \
     -Isrc \
-    -I../../common/cpp/src
+    -I../../common/cpp/src \
+    -I$(SKULL_SRCTOP)/deps/http-parser
 
-DEPS_LDFLAGS += -L../../common/cpp/lib
+DEPS_LDFLAGS += \
+    -L../../common/cpp/lib \
+    -L$(SKULL_SRCTOP)/deps/http-parser
 
 DEPS_LIBS += \
     -lprotobuf \
     -lskullcpp-api \
+    -lhttp_parser \
     -Wl,--no-as-needed \
     -lskull-common-cpp
 
 TEST_DEPS_LIBS += \
     -lprotobuf \
+    -lhttp_parser \
     -lskull-common-cpp \
     -lskull-unittest-cpp \
     -lskull-unittest-c
@@ -22,7 +27,10 @@ TEST_DEPS_LIBS += \
 # Objs and deployment related items
 SRCS = \
     src/service.cpp \
-    src/RankingCache.cpp
+    src/RankingCache.cpp \
+    src/HttpRequest.cpp \
+    src/HttpResponseImp.cpp \
+    src/EPHandler.cpp
 
 TEST_SRCS = \
     tests/test_service.cpp
@@ -45,4 +53,14 @@ include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.cpp.targets
 #  valgrind-check - This one is called when doing the memcheck for the Unit Test
 #  deploy  - This one is called when deployment be triggered
 #  clean   - This one is called when cleanup be triggered
+
+build_http_parser:
+	cd $(SKULL_SRCTOP)/deps/http-parser && make package CFLAGS_FAST_EXTRA+=-fPIC
+
+clean_http_parser:
+	cd $(SKULL_SRCTOP)/deps/http-parser && make clean
+
+prepare: build_http_parser
+
+clean: clean_http_parser
 

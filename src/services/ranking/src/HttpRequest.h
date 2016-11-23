@@ -18,15 +18,17 @@ private:
     bool          hasAcceptHeader;
     bool          hasAcceptCharsetHeader;
 
-private:
-    bool validate() const;
-
 public:
     HttpRequest();
     virtual ~HttpRequest();
 
 public:
-    bool parse(const google::protobuf::Message& request);
+    void  setMethod(const std::string& method);
+    void  setURI(const std::string& uri);
+    void  setBody(const std::string& body);
+    void  setHeaders(const HttpReqHdrMap& headerMap);
+
+    bool  validate() const;
     const std::string getHttpContent() const;
 
 public:

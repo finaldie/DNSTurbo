@@ -22,8 +22,10 @@ ssize_t _ep_unpack(const void* data, size_t len,
 }
 
 static
-void _ep_cb(const skullcpp::Service&, skullcpp::EPClientRet& ret,
-            const std::shared_ptr<HttpResponse>& httpResponse)
+void _ep_cb(const skullcpp::Service& service, skullcpp::EPClientNPRet& ret,
+            const std::shared_ptr<HttpResponse>& httpResponse,
+            const std::string& question,
+            EPHandler::EPHandlerCb cb)
 {
     if (ret.status() == skullcpp::EPClient::OK) {
         SKULLCPP_LOG_DEBUG("ep response: " <<
@@ -32,19 +34,8 @@ void _ep_cb(const skullcpp::Service&, skullcpp::EPClientRet& ret,
         SKULLCPP_LOG_DEBUG("ep timeout or error");
     }
 
-    // Parse the http response
-    auto& resp = (skull::service::http::query_resp&)ret.apiData().response();
-
-    resp.set_code(true);
-    resp.set_http_code(httpResponse->statusCode());
-    resp.set_latency(ret.latency());
-    resp.set_body(httpResponse->getBody());
-
-    for (const auto& entry : httpResponse->getHeaders()) {
-        auto* header = resp.add_header();
-        header->set_name(entry.first);
-        header->set_value(entry.second);
-    }
+    // callback with http response
+    cb(service, ret, question, httpResponse);
 }
 
 EPHandler::EPHandler() {
@@ -55,7 +46,8 @@ EPHandler::~EPHandler() {
 
 skullcpp::EPClient::Status
 EPHandler::send(const skullcpp::Service& service, const std::string& hostIp,
-                int port, int timeout, const std::string& content) {
+                int port, int timeout, const std::string& content,
+                const std::string& question, EPHandlerCb cb) {
     std::shared_ptr<HttpResponse> httpResponse;
     httpResponse.reset(new HttpResponseImp());
 
@@ -67,7 +59,8 @@ EPHandler::send(const skullcpp::Service& service, const std::string& hostIp,
     epClient.setUnpack(skull_BindEpUnpack(_ep_unpack, httpResponse));
 
     skullcpp::EPClient::Status st =
-        epClient.send(service, content, skull_BindEpCb(_ep_cb, httpResponse));
+        epClient.send(service, content,
+                      skull_BindEpNPCb(_ep_cb, httpResponse, question, cb));
 
     return st;
 }
