@@ -1,1 +1,4 @@
 # Config Items
+
+min_ttl: 60
+max_ttl: 300

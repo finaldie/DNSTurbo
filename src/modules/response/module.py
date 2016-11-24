@@ -1,12 +1,10 @@
 import yaml
 import pprint
 
-from skullpy import txn     as Txn
-from skullpy import txndata as TxnData
-from skullpy import logger  as Logger
+from skullpy import *
+from skullpy.txn import *
 
-from skull.common import protos  as Protos
-from skull.common import metrics as Metrics
+from skull.common import *
 from skull.common.proto import *
 
 from dnslib import *
@@ -17,15 +15,15 @@ from dnslib import *
 # @param config  A parsed yamlObj
 #
 def module_init(config):
-    Logger.debug("Response module init")
-    Logger.info('0', 'config: {}'.format(pprint.pformat(config)))
+    logger.debug("Response module init")
+    logger.info('0', 'config: {}'.format(pprint.pformat(config)))
     return
 
 ##
 # Module Release Function, be called when shutdown phase
 #
 def module_release():
-    Logger.debug("Response module release")
+    logger.debug("Response module release")
     return
 
 ##
@@ -39,7 +37,7 @@ def module_release():
 # @return How many bytes be consumed
 #
 def module_pack(txn, txndata):
-    #Logger.debug("response module pack")
+    #logger.debug("response module pack")
 
     sharedData = txn.data()
     req      = DNSRecord.parse(sharedData.rawRequest)
@@ -47,12 +45,12 @@ def module_pack(txn, txndata):
     question = sharedData.question
     qtype    = QTYPE[req.q.qtype]
 
-    module_counter = Metrics.module()
-    domain_counter = Metrics.domain(question)
+    module_counter = metrics.module()
+    domain_counter = metrics.domain(question)
 
     # Assemble response
-    if txn.status() != Txn.Txn.TXN_OK:
-        Logger.error('ModulePack', 'Error occurred, no answer for question: {}, type: {}'.format(question, qtype),
+    if txn.status() != Txn.TXN_OK:
+        logger.error('ModulePack', 'Error occurred, no answer for question: {}, type: {}'.format(question, qtype),
                 'Please check previous errors/exceptions')
 
         # Increase error counter
@@ -70,7 +68,7 @@ def module_pack(txn, txndata):
         # Increase response counter
         module_counter.response.inc(1)
         domain_counter.response.inc(1)
-        Logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {}'.format(question, qtype, nanswers, ips))
+        logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {}'.format(question, qtype, nanswers, ips))
 
     txndata.append(answer.pack())
 
@@ -83,5 +81,5 @@ def module_pack(txn, txndata):
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    #Logger.debug("response module run")
+    #logger.debug("response module run")
     return True

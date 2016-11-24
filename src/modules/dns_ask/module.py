@@ -1,12 +1,10 @@
 import yaml
 import pprint
 
-from skullpy import txn     as Txn
-from skullpy import txndata as TxnData
-from skullpy import logger  as Logger
+from skullpy import *
+from skullpy.txn import *
 
-from skull.common import protos  as Protos
-from skull.common import metrics as Metrics
+from skull.common import *
 from skull.common.proto import *
 
 ##
@@ -15,15 +13,15 @@ from skull.common.proto import *
 # @param config  A parsed yamlObj
 #
 def module_init(config):
-    Logger.debug("dns_ask module init")
-    Logger.info('ModuleInit', 'config: {}'.format(pprint.pformat(config)))
+    logger.debug("dns_ask module init")
+    logger.info('ModuleInit', 'config: {}'.format(pprint.pformat(config)))
     return
 
 ##
 # Module Release Function, be called when shutdown phase
 #
 def module_release():
-    Logger.debug("dns_ask module release")
+    logger.debug("dns_ask module release")
     return
 
 ##
@@ -35,7 +33,7 @@ def module_release():
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    #Logger.debug("dns_ask module run")
+    logger.debug("dns_ask module run")
 
     sharedData = txn.data()
     question = sharedData.question
@@ -43,14 +41,24 @@ def module_run(txn):
     dns_query = service_dns_query_req_pto.query_req()
     dns_query.question = question
 
-    ret = txn.iocall('dns', 'query', dns_query, 0, _dns_response)
-    return True
+    ret = txn.iocall('dns', 'query', dns_query, api_cb=_dns_response)
+    if ret == Txn.IO_OK:
+        return True
+    else:
+        logger.error("DNS_E1", "Dns iocall failed, ret: {}".format(ret))
+        return False
 
 def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
+    if iostatus != Txn.IO_OK:
+        logger.error("DNS_E2", "Dns response IO error: {}".format(iostatus))
+        return False
+
     sharedData = txn.data()
 
     for record in response_msg.record:
-        #Logger.debug("got ip: {}, ttl: {}".format(record.ip, record.ttl))
+        if logger.isDebugEnabled():
+            logger.debug("got ip: {}, ttl: {}".format(record.ip, record.ttl))
+
         sharedData.record.add(ip = record.ip, ttl = record.ttl)
 
     return True
