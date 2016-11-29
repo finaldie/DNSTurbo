@@ -1,0 +1,38 @@
+#language: c
+
+env:
+    - CC=gcc CXX=g++
+    - CC=clang CXX=clang++
+
+before_install:
+    - uname -a
+    - cat /etc/issue
+    - sudo apt-get update -qq
+    - sudo apt-get install autoconf valgrind expect libyaml-dev python-dev python-pip libprotobuf-dev protobuf-compiler libprotobuf-c0-dev protobuf-c-compiler libc-ares-dev
+    - sudo pip install PyYAML protobuf pympler WebOb dnslib
+    - gcc --version
+    - g++ --version
+    - clang --version
+    - clang++ --version
+    - python --version
+
+install: true
+
+before_script: true
+
+script:
+    - make deps
+    - sudo make install-deps
+    - skull build
+    - skull deploy
+    - sudo skull start -D
+
+after_success: true
+
+after_script: true
+
+after_failure: false
+
+notifications:
+    email:
+      - hyzwowtools@gmail.com

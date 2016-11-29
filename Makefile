@@ -26,6 +26,12 @@ SUBS = \
     $(MODS) \
     $(SRVS)
 
+deps:
+	cd ./deps/skull && make dep && make
+
+install-deps:
+	cd ./deps/skull && make install-dep && make install
+
 # Required by skull
 build:
 	@set -e; for sub in $(SUBS); do \
