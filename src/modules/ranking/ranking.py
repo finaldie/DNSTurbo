@@ -1,10 +1,11 @@
 from skullpy import *
 
-def _create_result_item(ip, ttl, latency):
+def _create_result_item(ip, ttl, latency, httpInfoCnt):
     return {
         'ip' : ip,
         'ttl': ttl,
-        'avgLatency': latency  # Integer
+        'avgLatency': latency,  # Integer
+        'httpInfoCnt': httpInfoCnt
     }
 
 def _item_cmp(left, right):
@@ -33,14 +34,18 @@ def score(records):
 
             if status != 1:
                 totalLatency += latency
-                validRecords += 1
+            else:
+                totalLatency += 2000 # For error connection record, increase 2000ms
 
+            validRecords += 1
+
+        # Calculate average latency and build a scoring result
         avgLatency = 0
 
         if validRecords > 0:
             avgLatency = int(totalLatency / validRecords)
 
-        scoringTmp.append(_create_result_item(ip, ttl, avgLatency))
+        scoringTmp.append(_create_result_item(ip, ttl, avgLatency, validRecords))
 
     # Ranking
     if logger.isDebugEnabled():
@@ -53,14 +58,14 @@ def score(records):
 
     return scoringResults
 
-def rank(scoringResults):
+def rank(scoringResults, low_latency_bar, latency_factor):
     rankingResults = []
 
     # 1. checking total record coount
     nrecords = len(scoringResults)
 
     if nrecords <= 1:
-        return scoringResults
+        return scoringResults, 0
 
     # 2. Keep latency <= 20ms, otherwise filter the record shouldn't larger than
     #  1.5x of the first record
@@ -71,7 +76,7 @@ def rank(scoringResults):
         latency = scoringRecord['avgLatency']
 
         # Add record which its latency <= 20ms
-        if latency <= 20:
+        if latency <= low_latency_bar:
             rankingResults.append(scoringRecord)
             continue
         elif baseRecord is None:
@@ -80,13 +85,11 @@ def rank(scoringResults):
 
         factor = float(latency) / float(baseRecordLatency)
 
-        if factor <= 1.5:
+        if factor <= latency_factor:
             rankingResults.append(scoringRecord)
         else:
             break
 
     nRankingRecords = len(rankingResults)
-    logger.info("Ranking", "Results: {} ; {} be filtered".format(
-        rankingResults, nrecords - nRankingRecords))
 
-    return rankingResults
+    return rankingResults, nrecords - nRankingRecords

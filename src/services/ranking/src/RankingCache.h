@@ -45,6 +45,7 @@ public:
     void rankResult(const std::string& question, RankingRecords&) const;
 
     int  cleanup();
+    int  cleanup(int deplayed);
 
     void doSpeedTest(const skullcpp::Service& service) const;
 

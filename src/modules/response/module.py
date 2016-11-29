@@ -47,6 +47,7 @@ def module_pack(txn, txndata):
 
     module_counter = metrics.module()
     domain_counter = metrics.domain(question)
+    qtype_counter  = metrics.qtype(qtype)
 
     # Assemble response
     if txn.status() != Txn.TXN_OK:
@@ -56,9 +57,12 @@ def module_pack(txn, txndata):
         # Increase error counter
         module_counter.error.inc(1)
         domain_counter.error.inc(1)
+        qtype_counter.error.inc(1)
     else:
         # Assemble DNS response
-        nanswers = len(sharedData.rankingRecord)
+        nRawRecords = len(sharedData.record)
+        nAnswers    = len(sharedData.rankingRecord)
+        nFiltered   = nRawRecords - nAnswers
         ips = []
 
         for record in sharedData.rankingRecord:
@@ -67,8 +71,18 @@ def module_pack(txn, txndata):
 
         # Increase response counter
         module_counter.response.inc(1)
+        module_counter.total_records.inc(nAnswers)
+        module_counter.total_filtered.inc(nFiltered)
+
         domain_counter.response.inc(1)
-        logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {}'.format(question, qtype, nanswers, ips))
+        domain_counter.total_records.inc(nAnswers)
+        domain_counter.total_filtered.inc(nFiltered)
+
+        qtype_counter.response.inc(1)
+        qtype_counter.total_records.inc(nAnswers)
+        qtype_counter.total_filtered.inc(nFiltered)
+
+        logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {} ,filtered: {}'.format(question, qtype, nAnswers, ips, nFiltered))
 
     txndata.append(answer.pack())
 

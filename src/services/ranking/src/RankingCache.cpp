@@ -16,7 +16,7 @@ void _updateHttpInfo(skullcpp::Service& service, const std::string question,
     auto* cache = (RankingCache*)service.get();
     bool ret = cache->updateRankResult(question, ip, status, httpCode, latency);
 
-    SKULLCPP_LOG_INFO("UpdateScore", "Update record: " << ret
+    SKULLCPP_LOG_DEBUG("Update record: " << ret
                       << " ,question: " << question
                       << " ,ip: "       << ip
                       << " ,latency: "  << latency);
@@ -31,7 +31,7 @@ void _httpResponseCb(const skullcpp::Service& service,
     int httpCode = httpResponse->statusCode();
     int latency  = ret.latency();
 
-    SKULLCPP_LOG_INFO("HttpResponseCb", "question: " << question
+    SKULLCPP_LOG_DEBUG("HttpResponseCb: question: " << question
                       << " ,ip: " << ret.ip()
                       << " ,status: " << status
                       << " ,httpCode: " << httpCode
@@ -168,6 +168,10 @@ int RankingCache::updateCacheRecords(const RankingRecords& latest, RankingRecord
 }
 
 int RankingCache::cleanup() {
+    return cleanup(0);
+}
+
+int RankingCache::cleanup(int delayed) {
     int totalCleaned = 0;
 
     time_t now = time(NULL);
@@ -177,7 +181,7 @@ int RankingCache::cleanup() {
         auto riter = iter->second.begin();
 
         for (; riter != iter->second.end(); ) {
-            if (now >= riter->expiredTime_) {
+            if (now >= riter->expiredTime_ + delayed) {
                 iter->second.erase(riter);
                 totalCleaned++;
             } else {
@@ -193,7 +197,7 @@ void RankingCache::doSpeedTest(const skullcpp::Service& service) const {
     // Send http request and collect the status and latency information
     //  Then do the scoring task based on these information
 
-    SKULLCPP_LOG_INFO("doSpeedTest", "Speed Test Start...");
+    SKULLCPP_LOG_DEBUG("Speed Test Start...");
     for (const auto& item : this->cache) {
         const auto& question = item.first;
         const auto& records  = item.second;
@@ -204,7 +208,7 @@ void RankingCache::doSpeedTest(const skullcpp::Service& service) const {
             httpReq.setURI("/");
             bool ret = httpReq.validate();
 
-            SKULLCPP_LOG_INFO("doSpeedTest", "http request validation: " << ret
+            SKULLCPP_LOG_DEBUG("doSpeedTest: http request validation: " << ret
                               << " question: " << question
                               << " qtype: "       << record.qtype_
                               << " ip: "          << record.ip_

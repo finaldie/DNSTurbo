@@ -53,15 +53,24 @@ def module_unpack(txn, data):
     # Store data into txn sharedData
     sharedData = txn.data()
     sharedData.question = question
+    if QTYPE[question_type] == 'A':
+        sharedData.qtype = 1
+    elif QTYPE[question_type] == 'AAAA':
+        sharedData.qtype = 2
+    else:
+        sharedData.qtype = 0 # Error type
+
     sharedData.request_id = request_id
     sharedData.rawRequest = bytes(rawRecord.pack())
 
     # Increase counters
-    mod_metrics = metrics.module()
-    mod_metrics.request.inc(1)
-
+    module_counter = metrics.module()
     domain_counter = metrics.domain(question)
+    qtype_counter  = metrics.qtype(QTYPE[question_type])
+
+    module_counter.request.inc(1)
     domain_counter.request.inc(1)
+    qtype_counter.request.inc(1)
     return len(data)
 
 ##
@@ -73,4 +82,11 @@ def module_unpack(txn, data):
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
+    sharedData = txn.data()
+
+    question_type = sharedData.qtype
+    if question_type != 1:
+        # Currently we only support query A record, otherwise make a failure
+        return False
+
     return True

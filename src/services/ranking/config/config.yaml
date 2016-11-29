@@ -8,3 +8,5 @@
 #
 
 cleanup_interval: 60000 # 60s
+
+cleanup_delayed: 600 # Unit: second

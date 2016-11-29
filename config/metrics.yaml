@@ -7,6 +7,10 @@ module:
             desc: module response counter
         error:
             desc: error occurred
+        total_records:
+            desc: Total returned records
+        total_filtered:
+            desc: Total filtered records
 
 # Per-domain counters
 domain:
@@ -18,3 +22,22 @@ domain:
             desc: transaction response count
         error:
             desc: error occurred
+        total_records:
+            desc: Total returned records
+        total_filtered:
+            desc: Total filtered records
+
+# Per-QType counters
+qtype:
+    type: dynamic
+    metrics:
+        request:
+            desc: transaction request count
+        response:
+            desc: transaction response count
+        error:
+            desc: error occurred
+        total_records:
+            desc: Total returned records
+        total_filtered:
+            desc: Total filtered records

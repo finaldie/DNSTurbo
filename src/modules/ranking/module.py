@@ -12,6 +12,8 @@ import ranking
 
 CFG_MIN_TTL = 0
 CFG_MAX_TTL = 0
+CFG_LOW_LATENCY_BAR = 0
+CFG_LATENCY_FACTOR = 1.2
 
 ##
 # Module Init Entry, be called when start phase
@@ -24,8 +26,13 @@ def module_init(config):
 
     global CFG_MIN_TTL
     global CFG_MAX_TTL
+    global CFG_LOW_LATENCY_BAR
+    global CFG_LATENCY_FACTOR
     CFG_MIN_TTL = config['min_ttl']
     CFG_MAX_TTL = config['max_ttl']
+    CFG_LOW_LATENCY_BAR = config['low_latency_bar']
+    CFG_LATENCY_FACTOR  = config['latency_factor']
+
     return
 
 ##
@@ -77,14 +84,25 @@ def _ranking_response(txn, iostatus, api_name, request_msg, response_msg):
         return True
 
     # Do the score and rank
+    global CFG_LOW_LATENCY_BAR
+    global CFG_LATENCY_FACTOR
     scoringResults = ranking.score(response_msg.result)
-    rankingResults = ranking.rank(scoringResults)
+    rankingResults, filtered = ranking.rank(scoringResults, CFG_LOW_LATENCY_BAR,
+            CFG_LATENCY_FACTOR)
+
+    logger.info("Ranking", "question: {} ,total: {} ,filtered {} ,Results: {}".format(
+        request_msg.question, len(scoringResults), filtered, rankingResults))
 
     global CFG_MIN_TTL
     for record in rankingResults:
         # Recalculate ttl when there is no scoring information and ttl > CFG_MIN_TTL
         ttl = record['ttl']
         latency = record['avgLatency']
+        httpInfoCnt = record['httpInfoCnt']
+
+        new_ttl = CFG_MIN_TTL * httpInfoCnt
+        if new_ttl > 0:
+            ttl = min([new_ttl, ttl])
 
         if latency == 0 and ttl > CFG_MIN_TTL:
             ttl = CFG_MIN_TTL

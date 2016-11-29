@@ -10,7 +10,6 @@
 
 #include "RankingCache.h"
 
-#define RANKING_CACHE_CLEANUP_INTERVAL (60 * 1000)
 #define RANKING_CACHE_RANK_INTERVAL    (10 * 1000)
 
 using namespace skull::service::ranking;
@@ -28,7 +27,7 @@ static
 void _rankingCacheCleanup(skullcpp::Service& service) {
     const auto& config = skullcpp::Config::instance();
     auto* cache = (RankingCache*)service.get();
-    int cleaned = cache->cleanup();
+    int cleaned = cache->cleanup(config.cleanup_delayed());
 
     SKULLCPP_LOG_INFO("RankingCache", "Clean up " << cleaned << " records");
 
