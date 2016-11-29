@@ -21,8 +21,8 @@ install: true
 before_script: true
 
 script:
-    - make deps
-    - sudo make install-deps
+    - make dep
+    - sudo make install-dep
     - skull build
     - skull deploy
     - sudo skull start -D

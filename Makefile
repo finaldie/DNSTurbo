@@ -26,10 +26,10 @@ SUBS = \
     $(MODS) \
     $(SRVS)
 
-deps:
+dep:
 	cd ./deps/skull && make dep && make
 
-install-deps:
+install-dep:
 	cd ./deps/skull && make install-dep && make install
 
 # Required by skull
@@ -104,7 +104,7 @@ prepare_deploy_files:
 	@echo "done"
 
 .PHONY: build check valgrind-check ft-check deploy clean prepare_deploy
-.PHONY: prepare_deploy_dirs prepare_deploy_files help
+.PHONY: prepare_deploy_dirs prepare_deploy_files help dep install-dep
 
 help:
 	@echo "make options:"
