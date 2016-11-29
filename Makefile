@@ -26,12 +26,6 @@ SUBS = \
     $(MODS) \
     $(SRVS)
 
-dep:
-	cd ./deps/skull && make dep && make
-
-install-dep:
-	cd ./deps/skull && make install-dep && make install
-
 # Required by skull
 build:
 	@set -e; for sub in $(SUBS); do \
@@ -83,6 +77,12 @@ deploy: prepare_deploy
 	    $(MAKE) -C $$subdir deploy DEPLOY_DIR=$(DEPLOY_DIR_ROOT); \
 	    echo "done"; \
 	done
+
+dep:
+	cd ./deps/skull && make dep && make
+
+install-dep:
+	cd ./deps/skull && make install-dep && make install
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
