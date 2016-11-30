@@ -10,11 +10,11 @@ DNS Turbo - A middleware between browser and local DNS client/server, to optimiz
  
 ## Features
 * Builtin
- - [x] Optimized A record
+ - [x] Optimized A Record
  - [x] Http Latency Detection
  
 * Coming Soon:
- - [ ] Optimized AAAA record
+ - [ ] Optimized AAAA Record
  - [ ] ICMP Latency Detection
  
 ## Install Dependencies
@@ -43,10 +43,10 @@ sudo skull start -D
 ## Setup
 Now, the DNSTurbo is all set, let's chain it in DNS pipe. For example, the DNSTurbo is set up in `192.168.1.100`
 
-For Mac:
+* **For Mac:**
 Open `System Preferences` -> `Network` -> `Advanced` -> `DNS`, then add `192.168.1.100` in the left window.
 
-For Windows7:
+* **For Windows7:**
 Open `Network Apaptor` -> `Property` -> `TCP/IPv4`, then select `Manual DNS` option, and add `192.168.1.100` there.
 
 After that, enjoy the new experience :)
