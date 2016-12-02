@@ -54,6 +54,14 @@ def module_run(txn):
     sharedData = txn.data()
     question = sharedData.question
 
+    # Return record directly when total number <= 1
+    nrecords = len(sharedData.record)
+    if nrecords <= 1:
+        for record in sharedData.record:
+            sharedData.rankingRecord.add(ip = record.ip, ttl = record.ttl)
+        return True
+
+    # NRecords > 1, then get the final records from ranking services
     rank_query = service_ranking_rank_req_pto.rank_req()
     rank_query.question = question
     rank_query.qtype = 1
