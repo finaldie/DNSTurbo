@@ -7,16 +7,16 @@ DNS Turbo - A middleware between browser and local DNS client/server, to optimiz
  - [x] Linux
  - [x] 32/64 bit compatible
  - [x] x86/ARM compatible
- 
+
 ## Features
 * Builtin
  - [x] Optimized A Record
+ - [x] Optimized AAAA Record
  - [x] Http Latency Detection
- 
+
 * Coming Soon:
- - [ ] Optimized AAAA Record
  - [ ] ICMP Latency Detection
- 
+
 ## Install Dependencies
 ```console
 # Install System Dependencies
