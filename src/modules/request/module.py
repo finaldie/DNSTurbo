@@ -85,8 +85,9 @@ def module_run(txn):
     sharedData = txn.data()
 
     question_type = sharedData.qtype
-    if question_type != 1:
-        # Currently we only support query A record, otherwise make a failure
+    if question_type != 1 and question_type != 2:
+        # Currently we only support query A and AAAA record,
+        #  otherwise make a failure
         return False
 
     return True

@@ -37,9 +37,11 @@ def module_run(txn):
 
     sharedData = txn.data()
     question = sharedData.question
+    question_type = sharedData.qtype
 
     dns_query = service_dns_query_req_pto.query_req()
     dns_query.question = question
+    dns_query.qtype = question_type == 1 and 1 or 2
 
     ret = txn.iocall('dns', 'query', dns_query, api_cb=_dns_response)
     if ret == Txn.IO_OK:

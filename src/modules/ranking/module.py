@@ -52,7 +52,8 @@ def module_release():
 #         - False if error occurred
 def module_run(txn):
     sharedData = txn.data()
-    question = sharedData.question
+    question   = sharedData.question
+    question_type = sharedData.qtype
 
     # Return record directly when total number <= 1
     nrecords = len(sharedData.record)
@@ -64,7 +65,7 @@ def module_run(txn):
     # NRecords > 1, then get the final records from ranking services
     rank_query = service_ranking_rank_req_pto.rank_req()
     rank_query.question = question
-    rank_query.qtype = 1
+    rank_query.qtype    = question_type
 
     for record in sharedData.record:
         rank_query.rRecord.add(ip = record.ip, expiredTime = int(time.time()) + record.ttl)

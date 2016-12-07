@@ -61,6 +61,8 @@ void RankingCache::addIntoCache(const std::string& question,
 }
 
 void RankingCache::rankResult(const std::string& question, RankingRecords& records) const {
+    if (records.empty()) return;
+
     const auto iter = this->cache.find(question);
     if (iter == this->cache.end()) return;
     const auto& config = skullcpp::Config::instance();
@@ -68,6 +70,10 @@ void RankingCache::rankResult(const std::string& question, RankingRecords& recor
     // Filter out the expired records, and fill the score into output records
     time_t now = time(NULL);
     for (const auto& record : iter->second) {
+        if (record.qtype_ != records[0].qtype_) {
+            continue;
+        }
+
         if (now - config.cleanup_interval() >= record.expiredTime_) {
             continue;
         }
@@ -173,12 +179,14 @@ int RankingCache::cleanup() {
 
 int RankingCache::cleanup(int delayed) {
     int totalCleaned = 0;
+    int total = 0;
 
     time_t now = time(NULL);
     auto iter = this->cache.begin();
 
     for (; iter != this->cache.end(); iter++) {
         auto riter = iter->second.begin();
+        total += iter->second.size();
 
         for (; riter != iter->second.end(); ) {
             if (now >= riter->expiredTime_ + delayed) {
@@ -190,6 +198,8 @@ int RankingCache::cleanup(int delayed) {
         }
     }
 
+    SKULLCPP_LOG_INFO("RankingCache", "Clean up " << totalCleaned << " records"
+                      << ", Total: " << total);
     return totalCleaned;
 }
 

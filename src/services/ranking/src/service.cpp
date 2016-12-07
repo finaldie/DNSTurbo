@@ -27,9 +27,7 @@ static
 void _rankingCacheCleanup(skullcpp::Service& service) {
     const auto& config = skullcpp::Config::instance();
     auto* cache = (RankingCache*)service.get();
-    int cleaned = cache->cleanup(config.cleanup_delayed());
-
-    SKULLCPP_LOG_INFO("RankingCache", "Clean up " << cleaned << " records");
+    cache->cleanup(config.cleanup_delayed());
 
     // Set up a clean up job
     service.createJob((uint32_t)config.cleanup_interval(), 1,
@@ -99,6 +97,9 @@ void ranking(const skullcpp::Service& service,
              google::protobuf::Message& response) {
     const auto* rankingCache = (RankingCache*)service.get();
     const auto& rankReq = (const rank_req&)request;
+    RankingCache::QTYPE qtype = rankReq.qtype() == 1
+                                ? RankingCache::QTYPE::A
+                                : RankingCache::QTYPE::AAAA;
 
     int recordSz = rankReq.rrecord_size();
     if (!recordSz) {
@@ -113,9 +114,7 @@ void ranking(const skullcpp::Service& service,
         RankingCache::RankingRecord rankRecord;
 
         rankRecord.ip_    = record.ip();
-        rankRecord.qtype_ = rankReq.qtype() == 1
-                                ? RankingCache::QTYPE::A
-                                : RankingCache::QTYPE::AAAA;
+        rankRecord.qtype_ = qtype;
         rankRecord.expiredTime_ = record.expiredtime();
 
         records.push_back(rankRecord);
