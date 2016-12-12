@@ -1,3 +1,5 @@
+* 2016-12-12 0.1.3
+   * Fix AAAA record conversion issue
 * 2016-12-06 0.1.2
    * Optimize AAAA record
 * 2016-11-30 0.1.1
