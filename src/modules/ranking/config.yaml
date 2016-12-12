@@ -4,4 +4,4 @@ min_ttl: 10
 max_ttl: 300
 
 low_latency_bar: 20
-latency_factor: 1.1
+latency_factor: 1.05
