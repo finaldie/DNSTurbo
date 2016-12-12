@@ -42,6 +42,7 @@ def module_run(txn):
     dns_query = service_dns_query_req_pto.query_req()
     dns_query.question = question
     dns_query.qtype = question_type == 1 and 1 or 2
+    logger.debug("question: {}, qtype: {}".format(question, question_type))
 
     ret = txn.iocall('dns', 'query', dns_query, api_cb=_dns_response)
     if ret == Txn.IO_OK:
@@ -59,7 +60,8 @@ def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
 
     for record in response_msg.record:
         if logger.isDebugEnabled():
-            logger.debug("got ip: {}, ttl: {}".format(record.ip, record.ttl))
+            logger.debug("For question: {}, qtype: {}, got ip: {}, ttl: {}".format(
+                sharedData.question, sharedData.qtype, record.ip, record.ttl))
 
         sharedData.record.add(ip = record.ip, ttl = record.ttl)
 

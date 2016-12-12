@@ -66,7 +66,11 @@ def module_pack(txn, txndata):
         ips = []
 
         for record in sharedData.rankingRecord:
-            answer.add_answer(RR(question, QTYPE.A, rdata = A(record.ip), ttl=record.ttl))
+            if req.q.qtype == QTYPE.A:
+                answer.add_answer(RR(question, req.q.qtype, rdata = A(record.ip), ttl=record.ttl))
+            elif req.q.qtype == QTYPE.AAAA:
+                answer.add_answer(RR(question, req.q.qtype, rdata = AAAA(record.ip), ttl=record.ttl))
+
             ips.append(record.ip)
 
         # Increase response counter
