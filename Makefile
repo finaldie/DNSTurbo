@@ -85,7 +85,7 @@ install-dep:
 	cd ./deps/skull && make install-dep && make install
 
 clean-dep:
-	cd ./deps/skull && make clean-dep
+	cd ./deps/skull && make clean-dep && make clean
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
