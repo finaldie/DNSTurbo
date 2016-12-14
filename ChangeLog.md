@@ -1,5 +1,7 @@
+* 2016-12-18 0.3.2
+   * Upgrade skull-engine to 0.9.6
 * 2016-12-15 0.3.1
-   * Upgrade skull-engine to latest version
+   * Upgrade skull-engine to 0.9.5
    * Optimize the system performance
    * Add status job and fix cleanup job errors
    * Adjust latency factor to 1.05
