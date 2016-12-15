@@ -52,7 +52,8 @@ public:
     bool updateRankResult(const std::string& question, const std::string& ip,
                           int status, int httpCode, int latency);
 
-    const std::string dumpCache() const;
+    const std::string dump() const;
+    const std::string status() const;
 
 private:
     bool updateRankResult(const RankingRecord&, RankingRecords&) const;

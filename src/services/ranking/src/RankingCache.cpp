@@ -94,7 +94,7 @@ bool RankingCache::updateRankResult(const RankingRecord& curr,
     return false;
 }
 
-const std::string RankingCache::dumpCache() const {
+const std::string RankingCache::dump() const {
     std::ostringstream oss;
 
     for (const auto& qitem : this->cache) {
@@ -113,6 +113,19 @@ const std::string RankingCache::dumpCache() const {
         }
     }
 
+    return oss.str();
+}
+
+const std::string RankingCache::status() const {
+    std::ostringstream oss;
+    oss << "Total questions: " << this->cache.size() << ", ";
+
+    size_t totalRecords = 0;
+    for (const auto& qitem : this->cache) {
+        totalRecords += qitem.second.size();
+    }
+
+    oss << " total records: " << totalRecords;
     return oss.str();
 }
 

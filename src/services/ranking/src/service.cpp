@@ -11,10 +11,13 @@
 #include "RankingCache.h"
 
 #define RANKING_CACHE_RANK_INTERVAL    (10 * 1000)
+#define RANKING_CACHE_STATUS_INTERVAL  (5 * 1000)
 
 using namespace skull::service::ranking;
 
 /**************************** Internal APIs ***********************************/
+static void _rankingCacheCleanup(skullcpp::Service& service);
+
 static
 void _rankingRecordUpdating(skullcpp::Service& service,
                             const std::string& question,
@@ -24,14 +27,30 @@ void _rankingRecordUpdating(skullcpp::Service& service,
 }
 
 static
+void _cleanupError(const skullcpp::Service& service) {
+    SKULLCPP_LOG_ERROR("_cleanupError", "_cleanup error occurred",
+        "Reduce the service load or increase the service task queue size");
+
+    const auto& config = skullcpp::Config::instance();
+    int ret = service.createJob((uint32_t)config.cleanup_interval(), 1,
+                      skull_BindSvcJobNPW(_rankingCacheCleanup), _cleanupError);
+    if (ret) {
+        SKULLCPP_LOG_ERROR("_cleanupError", "Create job failed", "Check the parameters");
+    }
+}
+
+static
 void _rankingCacheCleanup(skullcpp::Service& service) {
     const auto& config = skullcpp::Config::instance();
     auto* cache = (RankingCache*)service.get();
     cache->cleanup(config.cleanup_delayed());
 
     // Set up a clean up job
-    service.createJob((uint32_t)config.cleanup_interval(), 1,
-                      skull_BindSvcJobNPW(_rankingCacheCleanup), NULL);
+    int ret = service.createJob((uint32_t)config.cleanup_interval(), 1,
+                      skull_BindSvcJobNPW(_rankingCacheCleanup), _cleanupError);
+    if (ret) {
+        SKULLCPP_LOG_ERROR("Cleanup", "Create job failed", "Check the parameters");
+    }
 }
 
 static
@@ -42,6 +61,18 @@ void _rankingCacheSpeedTest(const skullcpp::Service& service) {
     // Set up a ranking job
     service.createJob(RANKING_CACHE_RANK_INTERVAL, 1,
                       skull_BindSvcJobNPR(_rankingCacheSpeedTest), NULL);
+}
+
+static
+void _rankingCacheStatus(const skullcpp::Service& service) {
+    const auto* cache = (const RankingCache*)service.get();
+    const std::string statusStr = cache->status();
+
+    SKULLCPP_LOG_INFO("cache status", statusStr);
+
+    // Set up a ranking job
+    service.createJob(RANKING_CACHE_STATUS_INTERVAL, 1,
+                      skull_BindSvcJobNPR(_rankingCacheStatus), NULL);
 }
 
 // ====================== Service Init/Release =================================
@@ -68,6 +99,10 @@ void skull_service_init(skullcpp::Service& service, const skull_config_t* config
     // Set up a ranking job
     service.createJob(RANKING_CACHE_RANK_INTERVAL, 1,
                       skull_BindSvcJobNPR(_rankingCacheSpeedTest), NULL);
+
+    // Set up a ranking status job
+    service.createJob(RANKING_CACHE_STATUS_INTERVAL, 1,
+                      skull_BindSvcJobNPR(_rankingCacheStatus), NULL);
 }
 
 /**
