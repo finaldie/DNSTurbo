@@ -7,6 +7,9 @@
 #   test_bool: true
 #
 
-cleanup_interval: 60000 # 60s
+latency_detection_interval: 3
+latency_detection_round: 5
 
 cleanup_delayed: 600 # Unit: second
+
+status_interval: 5 # Unit: second

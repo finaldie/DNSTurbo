@@ -1,6 +1,6 @@
 # Config Items
 
-min_ttl: 10
+min_ttl: 20
 max_ttl: 300
 
 low_latency_bar: 20

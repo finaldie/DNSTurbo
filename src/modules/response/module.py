@@ -71,7 +71,7 @@ def module_pack(txn, txndata):
             elif req.q.qtype == QTYPE.AAAA:
                 answer.add_answer(RR(question, req.q.qtype, rdata = AAAA(record.ip), ttl=record.ttl))
 
-            ips.append(record.ip)
+            ips.append((record.ip, record.ttl))
 
         # Increase response counter
         module_counter.response.inc(1)

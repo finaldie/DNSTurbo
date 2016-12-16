@@ -11,18 +11,6 @@
 #define MAX_HTTP_INFO 20
 
 static
-void _updateHttpInfo(skullcpp::Service& service, const std::string question,
-                  const std::string ip, int status, int httpCode, int latency) {
-    auto* cache = (RankingCache*)service.get();
-    bool ret = cache->updateRankResult(question, ip, status, httpCode, latency);
-
-    SKULLCPP_LOG_DEBUG("Update record: " << ret
-                      << " ,question: " << question
-                      << " ,ip: "       << ip
-                      << " ,latency: "  << latency);
-}
-
-static
 void _httpResponseCb(const skullcpp::Service& service,
                      skullcpp::EPClientNPRet& ret,
                      const std::string& question,
@@ -30,15 +18,29 @@ void _httpResponseCb(const skullcpp::Service& service,
     int status   = ret.status();
     int httpCode = httpResponse->statusCode();
     int latency  = ret.latency();
+    const std::string& ip = ret.ip();
 
     SKULLCPP_LOG_DEBUG("HttpResponseCb: question: " << question
-                      << " ,ip: " << ret.ip()
-                      << " ,status: " << status
+                      << " ,ip: "       << ip
+                      << " ,status: "   << status
                       << " ,httpCode: " << httpCode
-                      << " ,latency: " << latency);
+                      << " ,latency: "  << latency);
 
-    service.createJob(0, 1,
-        skull_BindSvcJobNPW(_updateHttpInfo, question, ret.ip(), status, httpCode, latency), NULL);
+    service.createJob(0, 1, [=] (skullcpp::Service& service) {
+        auto* cache = (RankingCache*)service.get();
+        bool ret = cache->updateLatencyResult(question, ip, status, httpCode, latency);
+
+        SKULLCPP_LOG_DEBUG("Update record: " << ret
+                           << " ,question: " << question
+                           << " ,ip: "       << ip
+                           << " ,latency: "  << latency);
+    }, [=] (const skullcpp::Service& service) {
+        SKULLCPP_LOG_ERROR("_HttpResponseCb", "Update record failed, "
+                           << " ,question: " << question
+                           << " ,ip: "       << ip
+                           << " ,latency: "  << latency,
+                           "Reduce system load or increase service queue size");
+    });
 }
 
 RankingCache::RankingCache() {
@@ -47,16 +49,23 @@ RankingCache::RankingCache() {
 RankingCache::~RankingCache() {
 }
 
-void RankingCache::addIntoCache(const std::string& question,
-        const RankingRecords& records) {
+void RankingCache::addIntoCache(const skullcpp::Service& service,
+                                const std::string& question,
+                                const RankingRecords& records) {
     if (question.empty()) return;
     if (records.empty()) return;
 
     auto iter = this->cache.find(question);
     if (iter == this->cache.end()) {
+        // 1. Insert records into ranking cache
         this->cache.insert(std::make_pair(question, records));
+
+        // 2. Append into speed test array
+        for (const auto& record : records) {
+            appendLatencyCache(question, record);
+        }
     } else {
-        updateCacheRecords(records, iter->second);
+        updateCacheRecords(question, records, iter->second);
     }
 }
 
@@ -118,47 +127,42 @@ const std::string RankingCache::dump() const {
 
 const std::string RankingCache::status() const {
     std::ostringstream oss;
-    oss << "Total questions: " << this->cache.size() << ", ";
+    oss << "Total questions: " << this->cache.size();
 
     size_t totalRecords = 0;
     for (const auto& qitem : this->cache) {
         totalRecords += qitem.second.size();
     }
 
-    oss << " total records: " << totalRecords;
+    oss << " ,total records: " << totalRecords;
     return oss.str();
 }
 
-bool RankingCache::updateRankResult(const std::string& question,
+bool RankingCache::updateLatencyResult(const std::string& question,
                                     const std::string& ip,
                                     int status,
                                     int httpCode,
                                     int latency) {
-    auto iter = this->cache.find(question);
-    if (iter == this->cache.end()) return false;
+    // 1. Get Index
+    std::string key = question + "__" + ip;
+    auto iter = this->latencyCache.qip2idx_.find(key);
+    if (iter == this->latencyCache.qip2idx_.end()) return false;
 
-    for (auto& item : iter->second) {
-        if (item.ip_ != ip) {
-            continue;
-        }
+    // 2. Verify Index
+    size_t idx = iter->second;
+    size_t qsz = this->latencyCache.queue_.size();
+    if (idx >= qsz) return false;
 
-        HttpInfo httpInfo;
-        httpInfo.status_   = status;
-        httpInfo.httpCode_ = httpCode;
-        httpInfo.latency_  = latency;
-
-        if (item.httpInfo_.size() == MAX_HTTP_INFO) {
-            item.httpInfo_.erase(item.httpInfo_.begin());
-        }
-        item.httpInfo_.push_back(httpInfo);
-        item.httpInfo_.shrink_to_fit();
-        return true;
-    }
-
-    return false;
+    // 3. Update Result
+    auto& item = this->latencyCache.queue_[idx];
+    item.httpInfo_.status_   = status;
+    item.httpInfo_.httpCode_ = httpCode;
+    item.httpInfo_.latency_  = latency;
+    return true;
 }
 
-int RankingCache::updateCacheRecords(const RankingRecords& latest, RankingRecords& curr) {
+int RankingCache::updateCacheRecords(const std::string& question,
+    const RankingRecords& latest, RankingRecords& curr) {
     int totalUpdates = 0;
 
     for (const auto& record : latest) {
@@ -179,6 +183,8 @@ int RankingCache::updateCacheRecords(const RankingRecords& latest, RankingRecord
 
         if (!found) {
             curr.push_back(record);
+            appendLatencyCache(question, record);
+
             totalUpdates++;
         }
     }
@@ -197,17 +203,25 @@ int RankingCache::cleanup(int delayed) {
     time_t now = time(NULL);
     auto iter = this->cache.begin();
 
-    for (; iter != this->cache.end(); iter++) {
+    for (; iter != this->cache.end(); ) {
         auto riter = iter->second.begin();
         total += iter->second.size();
 
+        // Clean the expired ranking records
         for (; riter != iter->second.end(); ) {
             if (now >= riter->expiredTime_ + delayed) {
-                iter->second.erase(riter);
+                riter = iter->second.erase(riter);
                 totalCleaned++;
             } else {
                 ++riter;
             }
+        }
+
+        // Clean the key if the rankingRecord vector is empty
+        if (iter->second.empty()) {
+            iter = this->cache.erase(iter);
+        } else {
+            ++iter;
         }
     }
 
@@ -216,31 +230,98 @@ int RankingCache::cleanup(int delayed) {
     return totalCleaned;
 }
 
-void RankingCache::doSpeedTest(const skullcpp::Service& service) const {
+void RankingCache::doSpeedTest(const skullcpp::Service& service, size_t start,
+                               size_t end) const {
     // Send http request and collect the status and latency information
     //  Then do the scoring task based on these information
-
     SKULLCPP_LOG_DEBUG("Speed Test Start...");
-    for (const auto& item : this->cache) {
-        const auto& question = item.first;
-        const auto& records  = item.second;
 
-        for (const auto& record : records) {
-            HttpRequest httpReq;
-            httpReq.setMethod("GET");
-            httpReq.setURI("/");
-            bool ret = httpReq.validate();
+    size_t sz = this->latencyCache.queue_.size();
+    if (end < start || end >= sz) {
+        return;
+    }
 
-            SKULLCPP_LOG_DEBUG("doSpeedTest: http request validation: " << ret
-                              << " question: " << question
-                              << " qtype: "       << record.qtype_
-                              << " ip: "          << record.ip_
-                              << " expiredtime: " << record.expiredTime_);
+    for (size_t i = start; i <= end; i++) {
+        const auto& item = this->latencyCache.queue_[i];
+        doSpeedTest(service, item.question_, item.ip_, item.qtype_);
+    }
+}
 
-            EPHandler handler;
-            handler.send(service, record.ip_, 80, 2000, httpReq.getHttpContent(),
-                         question, _httpResponseCb);
+void RankingCache::doSpeedTest(const skullcpp::Service& service,
+                               const std::string& question,
+                               const std::string& ip,
+                               QTYPE qtype) const {
+    HttpRequest httpReq;
+    httpReq.setMethod("GET");
+    httpReq.setURI("/");
+    bool ret = httpReq.validate();
+
+    SKULLCPP_LOG_DEBUG("doSpeedTest: http request validation: " << ret
+                      << " question: "    << question
+                      << " ip: "          << ip
+                      << " qtype: "       << qtype);
+
+    EPHandler handler;
+    handler.send(service, ip, 80, 2000, httpReq.getHttpContent(),
+                 question, _httpResponseCb);
+}
+
+void RankingCache::appendLatencyCache(const std::string& question,
+                                      const RankingRecord& record) {
+    LatencyRecord sRecord;
+    sRecord.question_ = question;
+    sRecord.ip_       = record.ip_;
+    sRecord.qtype_    = record.qtype_;
+
+    // Push to queue
+    size_t sz = this->latencyCache.queue_.size();
+    this->latencyCache.queue_.push_back(sRecord);
+
+    // Create mapping
+    std::string key = question + "__" + sRecord.ip_;
+    this->latencyCache.qip2idx_.insert(std::make_pair(key, sz));
+}
+
+void RankingCache::shipLatencyResults() {
+    for (const auto& item : this->latencyCache.queue_) {
+        const std::string& question = item.question_;
+        const std::string& ip       = item.ip_;
+        QTYPE qtype                 = item.qtype_;
+        const HttpInfo& httpInfo    = item.httpInfo_;
+
+        auto iter = this->cache.find(question);
+        if (iter == this->cache.end()) continue;
+
+        for (auto& record : iter->second) {
+            if (record.ip_ != ip || record.qtype_ != qtype) {
+                continue;
+            }
+
+            if (record.httpInfo_.size() == MAX_HTTP_INFO) {
+                record.httpInfo_.erase(record.httpInfo_.begin());
+            }
+
+            record.httpInfo_.push_back(httpInfo);
+            record.httpInfo_.shrink_to_fit();
         }
     }
+}
+
+void RankingCache::rebuildLatencyCache() {
+    this->latencyCache.reset();
+
+    auto iter = this->cache.cbegin();
+    for (; iter != this->cache.end(); iter++) {
+        const std::string& question = iter->first;
+        const auto& records = iter->second;
+
+        for (const auto& record : records) {
+            appendLatencyCache(question, record);
+        }
+    }
+}
+
+size_t RankingCache::latencyCacheSize() const {
+    return this->latencyCache.queue_.size();
 }
 

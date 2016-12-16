@@ -28,7 +28,7 @@ void _ep_cb(const skullcpp::Service& service, skullcpp::EPClientNPRet& ret,
             EPHandler::EPHandlerCb cb)
 {
     if (ret.status() == skullcpp::EPClient::OK) {
-        SKULLCPP_LOG_DEBUG("ep response: " <<
+        SKULLCPP_LOG_TRACE("ep response: " <<
             std::string((const char*)ret.response(), ret.responseSize() >= 1024 ? 1024 : ret.responseSize()));
     } else {
         SKULLCPP_LOG_DEBUG("ep timeout or error");
