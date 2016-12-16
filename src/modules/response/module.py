@@ -1,5 +1,6 @@
 import yaml
 import pprint
+import time
 
 from skullpy import *
 from skullpy.txn import *
@@ -86,7 +87,9 @@ def module_pack(txn, txndata):
         qtype_counter.total_records.inc(nAnswers)
         qtype_counter.total_filtered.inc(nFiltered)
 
-        logger.info('ModulePack', 'Question: {} ,type: {}, {} Answers: {} ,filtered: {}'.format(question, qtype, nAnswers, ips, nFiltered))
+        duration = (time.time() - sharedData.startTime) * 1000
+        logger.info('ModulePack', 'Duration: {} ,filtered: {} ,Question: {} ,type: {}, {} Answers: {}'.format(
+            duration, nFiltered, question, qtype, nAnswers, ips))
 
     txndata.append(answer.pack())
 

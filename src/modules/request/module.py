@@ -1,5 +1,6 @@
 import yaml
 import pprint
+import time
 
 from skullpy import *
 
@@ -41,12 +42,12 @@ def module_unpack(txn, data):
     #logger.debug("request module unpack")
 
     # Parse dns request
-    request = DNSRecord.parse(data)
-    question = str(request.q.qname)
+    request       = DNSRecord.parse(data)
+    question      = str(request.q.qname)
     question_type = request.q.qtype
-    request_id = request.header.id
+    requestId     = request.header.id
 
-    rawRecord = DNSRecord(DNSHeader(id=request_id, qr=1, aa=1, ra=1), q=request.q)
+    rawRecord = DNSRecord(DNSHeader(id=requestId, qr=1, aa=1, ra=1), q=request.q)
 
     #logger.debug("question: {}, type: {}, {}".format(question, question_type, QTYPE[question_type]))
 
@@ -60,8 +61,9 @@ def module_unpack(txn, data):
     else:
         sharedData.qtype = 0 # Error type
 
-    sharedData.request_id = request_id
+    sharedData.requestId  = requestId
     sharedData.rawRequest = bytes(rawRecord.pack())
+    sharedData.startTime  = time.time()
 
     # Increase counters
     module_counter = metrics.module()
