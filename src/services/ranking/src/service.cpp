@@ -175,7 +175,7 @@ void ranking(const skullcpp::Service& service,
 
     // Rank it via a service job
     const std::string& question = rankReq.question();
-    service.createJob(0, 1, [question, records] (skullcpp::Service& service) {
+    service.createJob((uint32_t)0, 1, [question, records] (skullcpp::Service& service) {
         auto* cache = (RankingCache*)service.get();
         cache->addIntoCache(service, question, records);
     }, NULL);
