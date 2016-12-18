@@ -47,7 +47,6 @@ def module_pack(txn, txndata):
     qtype    = QTYPE[req.q.qtype]
 
     module_counter = metrics.module()
-    domain_counter = metrics.domain(question)
     qtype_counter  = metrics.qtype(qtype)
 
     # Assemble response
@@ -57,7 +56,6 @@ def module_pack(txn, txndata):
 
         # Increase error counter
         module_counter.error.inc(1)
-        domain_counter.error.inc(1)
         qtype_counter.error.inc(1)
     else:
         # Assemble DNS response
@@ -78,10 +76,6 @@ def module_pack(txn, txndata):
         module_counter.response.inc(1)
         module_counter.total_records.inc(nAnswers)
         module_counter.total_filtered.inc(nFiltered)
-
-        domain_counter.response.inc(1)
-        domain_counter.total_records.inc(nAnswers)
-        domain_counter.total_filtered.inc(nFiltered)
 
         qtype_counter.response.inc(1)
         qtype_counter.total_records.inc(nAnswers)

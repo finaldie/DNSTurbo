@@ -67,11 +67,9 @@ def module_unpack(txn, data):
 
     # Increase counters
     module_counter = metrics.module()
-    domain_counter = metrics.domain(question)
     qtype_counter  = metrics.qtype(QTYPE[question_type])
 
     module_counter.request.inc(1)
-    domain_counter.request.inc(1)
     qtype_counter.request.inc(1)
     return len(data)
 
