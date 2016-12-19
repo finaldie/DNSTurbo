@@ -1,3 +1,5 @@
+* 2016-12-18 0.3.3
+   * Tune the service parameters, optimize the performance
 * 2016-12-18 0.3.2
    * Upgrade skull-engine to 0.9.6
 * 2016-12-15 0.3.1
