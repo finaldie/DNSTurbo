@@ -73,7 +73,7 @@ void _cronjob(const skullcpp::Service& service) {
         size_t count    = (totalSz - gLatencyProcessed) / (size_t)leftRound;
         size_t startIdx = gLatencyProcessed;
         size_t endIdx   = gLatencyProcessed + count - 1;
-        SKULLCPP_LOG_DEBUG("LatencyTest: totalRound: " << totalLatencyRound
+        SKULLCPP_LOG_INFO("LatencyTest", "TotalRound: " << totalLatencyRound
                            << " ,currRound: " << currRound
                            << " ,leftRound: " << leftRound
                            << " ,processed: " << gLatencyProcessed
@@ -96,7 +96,7 @@ void _cronjob(const skullcpp::Service& service) {
     // Status
     if (gRound % conf.status_interval() == 0) {
         const std::string statusStr = cache->status();
-        SKULLCPP_LOG_INFO("cache status", statusStr);
+        SKULLCPP_LOG_INFO("Cache status", statusStr);
     }
 
     // Continue cronjob

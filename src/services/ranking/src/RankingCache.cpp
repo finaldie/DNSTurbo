@@ -77,14 +77,9 @@ void RankingCache::rankResult(const std::string& question, RankingRecords& recor
     const auto iter = this->cache.find(question);
     if (iter == this->cache.end()) return;
 
-    // Filter out the expired records, and fill the score into output records
-    time_t now = time(NULL);
+    // Fill the scores into output records
     for (const auto& record : iter->second) {
         if (record.qtype_ != records[0].qtype_) {
-            continue;
-        }
-
-        if (now >= record.expiredTime_) {
             continue;
         }
 
@@ -215,6 +210,13 @@ int RankingCache::cleanup(int delayed) {
                 totalCleaned++;
             } else {
                 ++riter;
+
+                SKULLCPP_LOG_DEBUG("Cleanup: Skip record "
+                                   << " ,question: "    << iter->first
+                                   << " ,now: "         << now
+                                   << " ,expiredtime: " << riter->expiredTime_
+                                   << " ,delayed: "     << delayed
+                                   << " ,httpInfoSz: "  << riter->httpInfo_.size());
             }
         }
 
