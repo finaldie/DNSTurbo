@@ -26,7 +26,7 @@ void _httpResponseCb(const skullcpp::Service& service,
                       << " ,httpCode: " << httpCode
                       << " ,latency: "  << latency);
 
-    service.createJob(0, 1, [=] (skullcpp::Service& service) {
+    skullcpp::Service::JobNPW updateFunc = [=] (skullcpp::Service& service) {
         auto* cache = (RankingCache*)service.get();
         bool ret = cache->updateLatencyResult(question, ip, status, httpCode, latency);
 
@@ -34,7 +34,9 @@ void _httpResponseCb(const skullcpp::Service& service,
                            << " ,question: " << question
                            << " ,ip: "       << ip
                            << " ,latency: "  << latency);
-    }, [=] (const skullcpp::Service& service) {
+    };
+
+    service.createJob(0, 1, updateFunc, [=] (const skullcpp::Service& service) {
         SKULLCPP_LOG_ERROR("_HttpResponseCb", "Update record failed, "
                            << " ,question: " << question
                            << " ,ip: "       << ip
@@ -74,7 +76,6 @@ void RankingCache::rankResult(const std::string& question, RankingRecords& recor
 
     const auto iter = this->cache.find(question);
     if (iter == this->cache.end()) return;
-    const auto& config = skullcpp::Config::instance();
 
     // Filter out the expired records, and fill the score into output records
     time_t now = time(NULL);
@@ -83,7 +84,7 @@ void RankingCache::rankResult(const std::string& question, RankingRecords& recor
             continue;
         }
 
-        if (now - config.cleanup_interval() >= record.expiredTime_) {
+        if (now >= record.expiredTime_) {
             continue;
         }
 
