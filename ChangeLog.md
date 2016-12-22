@@ -1,3 +1,6 @@
+* 2017-01-08 0.4.1
+   * Optimize ranking algo
+   * Upgrade skull-engine to latest version
 * 2016-12-18 0.3.3
    * Tune the service parameters, optimize the performance
 * 2016-12-18 0.3.2
