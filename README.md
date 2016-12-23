@@ -5,7 +5,7 @@ DNS Turbo - A middleware between browser and local DNS client/server, to optimiz
 
 ## Architecture
 
-![DNSTurbo-arch](https://github.com/finaldie/DNSTurbo/wiki/images/DNSTurbo_arch_1.png)
+![DNSTurbo-arch](https://github.com/finaldie/DNSTurbo/wiki/images/DNSTurbo_arch_2.png)
 
 ## Environment
  - [x] Linux
