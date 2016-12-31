@@ -3,9 +3,11 @@
 # DNSTurbo
 A middleware between browser and local DNS client/server, to speed up the Internet according to the network speed. It optimizes the A/AAAA records by latency detection mechanism, offer the best records the user wanted.
 
-Why not geo based DNS is not enough? As we know, there are a lot of geo based DNS services, like openDNS, google DNS, etc, but unfortunately, they can calculate the distance of the user location to the target host, but it's hard to say the returned records are always the best ones, since the real user experience depends on the user local network quality, different time, different website, the results are totally different.
+Why the GEO-based DNS is not enough? As we know, there are a lot of GEO-based DNS services, like openDNS, google DNS, etc. They can calculate the distance of the user location to the target host, to return the nearest records, but unfortunately it's hard to say the returned records are always the best ones, since the real user experience depends on the user local network quality, for the different time, different ISP and different website, the results are totally different.
 
 So, it's better to have another program to detect the quality of the DNS records from user's point of view, then filter the bad ones out, and keep the good ones as much as possible. **DNSTurbo** was born under this situation, plug it into the DNS pipeline, always keep the records as good as possible for the users.
+
+DNSTurbo do the _Latency Detection_, and does not do the _Bandwidth Detection_, because it's highly depend on the **Congestion Control**(For TCP connections), different congestion module would give the different results, and the _Bandwidth Detection_ is not only very heavy especially for the mobile device in _LTE_ network, but also would compete with _Browser_ to make the network worse than ever. And another hand, all the records returned should have the very similar network quality, so to maximize the _Bandwidth_, we should rely on the target program or *TCP Congestion Control* (Like Linux-4.9, the new **CC** module would try the best to use the _Bandwidth_ by the new algo)
 
 ## Architecture
 
