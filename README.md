@@ -1,7 +1,11 @@
 [![Build Status](https://travis-ci.org/finaldie/DNSTurbo.svg?branch=master)](https://travis-ci.org/finaldie/DNSTurbo)
 
 # DNSTurbo
-DNS Turbo - A middleware between browser and local DNS client/server, to optimize the records based on the network speed.
+A middleware between browser and local DNS client/server, to speed up the Internet according to the network speed. It optimizes the A/AAAA records by latency detection mechanism, offer the best records the user wanted.
+
+Why not geo based DNS is not enough? As we know, there are a lot of geo based DNS services, like openDNS, google DNS, etc, but unfortunately, they can calculate the distance of the user location to the target host, but it's hard to say the returned records are always the best ones, since the real user experience depends on the user local network quality, different time, different website, the results are totally different.
+
+So, it's better to have another program to detect the quality of the DNS records from user's point of view, then filter the bad ones out, and keep the good ones as much as possible. **DNSTurbo** was born under this situation, plug it into the DNS pipeline, always keep the records as good as possible for the users.
 
 ## Architecture
 
@@ -45,12 +49,14 @@ sudo skull start -D
 ```
 
 ## Setup
-Now, the DNSTurbo is all set, let's chain it in DNS pipe. For example, the DNSTurbo is set up in `192.168.1.100`
+Now, the DNSTurbo is all set, let's chain it in DNS pipe. For example, the DNSTurbo is set up in `192.168.31.221`
 
 * **For Mac:**
-Open `System Preferences` -> `Network` -> `Advanced` -> `DNS`, then add `192.168.1.100` in the left window.
+Open `System Preferences` -> `Network` -> `Advanced` -> `DNS`, then add `192.168.31.221` in the left window.
 
-* **For Windows7:**
-Open `Network Apaptor` -> `Property` -> `TCP/IPv4`, then select `Manual DNS` option, and add `192.168.1.100` there.
+![DNSTurbo-mac-setting](https://github.com/finaldie/DNSTurbo/wiki/images/mac_dns_setting.png)
+
+* **For Windows7/10:**
+Open `Network Apaptor` -> `Property` -> `TCP/IPv4`, then select `Manual DNS` option, and add `192.168.31.221` there.
 
 After that, enjoy the new experience :)
