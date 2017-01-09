@@ -9,6 +9,10 @@ So, it's better to have another program to detect the quality of the DNS records
 
 **DNSTurbo** do the _Latency Detection_, and does not do the _Bandwidth Detection_, because it's highly depend on the **Congestion Control**(For TCP connections), different congestion module would give the different results, and the _Bandwidth Detection_ is not only very heavy especially for the mobile device in _LTE_ network, but also would compete with _Browser_ to make the network worse than ever. And another hand, all the records returned should have the very similar network quality, so to maximize the _Bandwidth_, we should rely on the target program or *TCP Congestion Control* (Like Linux-4.9, the new **CC** module would try the best to use the _Bandwidth_ by the new algo)
 
+## Trailer
+<a href="https://www.youtube.com/watch?v=2u_-Wl7sDdA" target="_blank">Click here to watch the Trailer on Youtube</a>
+![DNSTurbo Logo](https://github.com/finaldie/DNSTurbo/wiki/images/Dnsturbo-logo.jpg)
+
 ## Architecture
 
 ![DNSTurbo-arch](https://github.com/finaldie/DNSTurbo/wiki/images/DNSTurbo_arch_2.png)
