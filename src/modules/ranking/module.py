@@ -33,7 +33,7 @@ def module_init(config):
     CFG_LOW_LATENCY_BAR = config['low_latency_bar']
     CFG_LATENCY_FACTOR  = config['latency_factor']
 
-    return
+    return True
 
 ##
 # Module Release Function, be called when shutdown phase

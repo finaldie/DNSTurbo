@@ -15,7 +15,7 @@ from skull.common.proto import *
 def module_init(config):
     logger.debug("dns_ask module init")
     logger.info('ModuleInit', 'config: {}'.format(pprint.pformat(config)))
-    return
+    return True
 
 ##
 # Module Release Function, be called when shutdown phase

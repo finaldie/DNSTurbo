@@ -108,7 +108,7 @@ void _cronjob(const skullcpp::Service& service) {
  * Service Initialization. It will be called before module initialization.
  */
 static
-void skull_service_init(skullcpp::Service& service, const skull_config_t* config)
+int  skull_service_init(skullcpp::Service& service, const skull_config_t* config)
 {
     SKULLCPP_LOG_INFO("svc.ranking", "Skull service initializing");
 
@@ -121,6 +121,7 @@ void skull_service_init(skullcpp::Service& service, const skull_config_t* config
     // Set up service cron job
     service.createJob(SERVICE_CRON_INTERVAL, 1,
                       skull_BindSvcJobNPR(_cronjob), NULL);
+    return 0;
 }
 
 /**
