@@ -17,7 +17,7 @@ from dnslib import *
 def module_init(config):
     logger.debug("py module init")
     logger.info('0', 'config: {}'.format(pprint.pformat(config)))
-    return
+    return True
 
 ##
 # Module Release Function, be called when shutdown phase

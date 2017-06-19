@@ -18,7 +18,7 @@ from dnslib import *
 def module_init(config):
     logger.debug("Response module init")
     logger.info('0', 'config: {}'.format(pprint.pformat(config)))
-    return
+    return True
 
 ##
 # Module Release Function, be called when shutdown phase
@@ -49,10 +49,16 @@ def module_pack(txn, txndata):
     module_counter = metrics.module()
     qtype_counter  = metrics.qtype(qtype)
 
+    client = txn.client()
+    peerName = client.name()
+    peerPort = client.port()
+    peerType = client.typeName()
+
     # Assemble response
     if txn.status() != Txn.TXN_OK:
-        logger.error('ModulePack', 'Error occurred, no answer for question: {}, type: {}'.format(question, qtype),
-                'Please check previous errors/exceptions')
+        logger.error('ModulePack', 'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type: {}'.format(
+            question, peerName, peerPort, peerType, qtype),
+            'Please check previous errors/exceptions')
 
         # Increase error counter
         module_counter.error.inc(1)
@@ -82,8 +88,8 @@ def module_pack(txn, txndata):
         qtype_counter.total_filtered.inc(nFiltered)
 
         duration = (time.time() - sharedData.startTime) * 1000
-        logger.info('ModulePack', 'Duration: {} ,filtered: {} ,Question: {} ,type: {}, {} Answers: {}'.format(
-            duration, nFiltered, question, qtype, nAnswers, ips))
+        logger.info('ModulePack', 'Peer: {}:{} {} ,Duration: {} ,filtered: {} ,Question: {} ,type: {}, {} Answers: {}'.format(
+            peerName, peerPort, peerType, duration, nFiltered, question, qtype, nAnswers, ips))
 
     txndata.append(answer.pack())
 
