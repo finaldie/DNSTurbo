@@ -2,6 +2,7 @@
    * Fix dependency issue in ubuntu 16.04
    * Add more logs for peer information
    * Upgrade `skull` to 1.0-rc2
+   * Refine log format of response module
 * 2017-01-08 0.4.1
    * Optimize ranking algo
    * Upgrade skull-engine to latest version
