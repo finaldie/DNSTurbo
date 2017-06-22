@@ -1,3 +1,5 @@
+* 2017-06-22 0.4.3
+   * Upgrade `skull` to 1.0-rc3
 * 2017-06-19 0.4.2
    * Fix dependency issue in ubuntu 16.04
    * Add more logs for peer information
