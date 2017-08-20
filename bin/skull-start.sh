@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 ulimit -c unlimited
@@ -6,24 +6,33 @@ ulimit -c unlimited
 ##################################### Utils ####################################
 usage() {
     echo "usage:"
-    echo "  skull-start.sh -c config [--memcheck|--gdb|--strace|--massif]"
+    echo "  skull-start.sh -c config [-D|--memcheck|--gdb|--strace|--massif|--no-log-rolling|--std-fowarding]"
 }
 
 skull_start() {
+    local args=""
+    if $no_log_rolling; then
+        args="$args -n"
+    fi
+
+    if $std_forwarding; then
+        args="$args -s"
+    fi
+
     if ! $daemon; then
-        exec skull-engine -c $skull_config
+        exec skull-engine -c $skull_config $args
     else
-        exec skull-engine -c $skull_config -D > log/stdout.log 2>&1 < /dev/null
+        exec skull-engine -c $skull_config $args -D > log/stdout.log 2>&1 < /dev/null
     fi
 }
 
 skull_start_memcheck() {
     # Generate suppression argument
-    local supp_files=(`ls bin/*.supp`)
+    local supp_files=`ls bin/*.supp`
     local supp_arg=""
 
-    for supp_file in ${supp_files[@]}; do
-        supp_arg+=" --suppressions="${supp_file}" "
+    for supp_file in $supp_files; do
+        supp_arg="$supp_arg --suppressions="${supp_file}" "
     done
 
     # Run valgrind to start skull
@@ -62,10 +71,12 @@ run_by_gdb=false
 run_by_strace=false
 massif=false
 daemon=false
+no_log_rolling=false
+std_forwarding=false
 
 args=`getopt -a \
-        -o c:Dh \
-        -l memcheck,gdb,strace,massif,help \
+        -o c:Dnh \
+        -l memcheck,gdb,strace,massif,no-log-rolling,std-forwarding,help \
         -n "skull-start.sh" -- "$@"`
 if [ $? != 0 ]; then
     echo "Error: Invalid parameters" >&2
@@ -85,6 +96,14 @@ while true; do
         -D)
             shift
             daemon=true
+            ;;
+        -n|--no-log-rolling)
+            shift
+            no_log_rolling=true
+            ;;
+        --std-forwarding)
+            shift
+            std_forwarding=true
             ;;
         --memcheck)
             shift

@@ -29,7 +29,7 @@ OPT = -O2
 else
 MACRO += -DSK_DEBUG -finstrument-functions
 OPT = -O0
-# If your compiler is gcc(>=4.8) or clang, enable the following line
+# If the compiler is gcc(>=4.8) or clang, enable the following line
 #EXTRA += -fsanitize=address
 endif
 
@@ -78,3 +78,11 @@ PARENT_DIRNAME ?= $(shell basename $(shell pwd | xargs dirname))
 TARGET ?= lib/libskull-$(PARENT_DIRNAME)-$(DIRNAME).so
 TEST_TARGET ?= test.out
 CONF_TARGET ?= skull-$(PARENT_DIRNAME)-$(DIRNAME).yaml
+
+GLOBAL_SUPPRESSION := $(SKULL_SRCTOP)/bin/musl.supp
+
+# valgrind command
+VALGRIND ?= valgrind --tool=memcheck --leak-check=full \
+    --suppressions=$(SUPPRESSION) \
+    --gen-suppressions=all --error-exitcode=1
+
