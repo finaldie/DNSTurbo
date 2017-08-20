@@ -1,3 +1,7 @@
+* 2017-08-20 0.5.1
+   * Upgrade `skull` to 1.1
+   * Support ENV variable `SKULL_DNS_NS` to override name server
+   * Docker Integration
 * 2017-06-22 0.4.3
    * Upgrade `skull` to 1.0-rc3
 * 2017-06-19 0.4.2
