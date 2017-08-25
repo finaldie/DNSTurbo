@@ -19,7 +19,7 @@ So, it's better to have another program to detect the quality of the DNS records
 
 ![DNSTurbo-arch](https://github.com/finaldie/DNSTurbo/wiki/images/DNSTurbo_arch_2.png)
 
-## Environment
+## Compatible Environments
  - [x] Linux
  - [x] 32/64 bit compatible
  - [x] x86/ARM compatible
@@ -29,6 +29,7 @@ So, it's better to have another program to detect the quality of the DNS records
  - [x] Optimized A Record
  - [x] Optimized AAAA Record
  - [x] Http Latency Detection
+ - [x] [Docker Image][3]
 
 * Coming Soon:
  - [ ] ICMP Latency Detection
@@ -56,6 +57,17 @@ skull build && skull deploy
 sudo skull start -D
 ```
 
+## Docker Images
+The [**_Docker images_**][3] are ready now, if people who don't want to waste time to build it from scratch, it's super easy to run it via docker image.
+
+Assume that we've already [installed _Docker_][1], then apply the below commands:
+```console
+bash$> docker pull finaldie/dnsturbo:0.5
+bash$> docker run -p 53:53/udp finaldie/dnsturbo:0.5
+```
+
+![DNSTurbo-Docker][2]
+
 ## Setup
 Now, the DNSTurbo is all set, let's chain it in DNS pipe. For example, the DNSTurbo is set up in `192.168.31.221`
 
@@ -68,3 +80,14 @@ Open `System Preferences` -> `Network` -> `Advanced` -> `DNS`, then add `192.168
 Open `Network Apaptor` -> `Property` -> `TCP/IPv4`, then select `Manual DNS` option, and add `192.168.31.221` there.
 
 After that, enjoy the new experience :)
+
+## Environment Variables
+Sometimes we don't want to use the default upstream DNS from `resolv.conf`, then there is an `Shell Environment Variable` can override it, just define an ENV var **_SKULL_DNS_NS_**, e.g.:
+```console
+export SKULL_DNS_NS=192.168.1.1
+export SKULL_DNS_NS=8.8.8.8
+```
+
+[1]: https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
+[2]: https://github.com/finaldie/DNSTurbo/wiki/images/dnsturbo-docker.png
+[3]: https://hub.docker.com/r/finaldie/dnsturbo/
