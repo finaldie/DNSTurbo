@@ -1,6 +1,7 @@
 MAKE_FLAGS ?= -s
 MAKE ?= make
 MAKE += $(MAKE_FLAGS)
+DEP_FOLDER = ./deps/skull
 
 # global variables
 SKULL_SRCTOP := $(shell pwd)
@@ -79,22 +80,22 @@ deploy: prepare_deploy
 	done
 
 dep:
-	cd ./deps/skull && $(MAKE) dep
+	$(MAKE) -C $(DEP_FOLDER) dep
 
 install-dep:
-	cd ./deps/skull && $(MAKE) install-dep
+	$(MAKE) -C $(DEP_FOLDER) install-dep
 
 clean-dep:
-	cd ./deps/skull && $(MAKE) clean-dep
+	$(MAKE) -C $(DEP_FOLDER) clean-dep
 
 skull:
-	cd ./deps/skull && $(MAKE)
+	$(MAKE) -C $(DEP_FOLDER)
 
 install-skull:
-	cd ./deps/skull && $(MAKE) install
+	$(MAKE) -C $(DEP_FOLDER) install
 
 clean-skull:
-	cd ./deps/skull && $(MAKE) clean
+	$(MAKE) -C $(DEP_FOLDER) clean
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
