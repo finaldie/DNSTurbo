@@ -79,13 +79,22 @@ deploy: prepare_deploy
 	done
 
 dep:
-	cd ./deps/skull && make dep && make
+	cd ./deps/skull && make dep
 
 install-dep:
-	cd ./deps/skull && make install-dep && make install
+	cd ./deps/skull && make install-dep
 
 clean-dep:
-	cd ./deps/skull && make clean-dep && make clean
+	cd ./deps/skull && make clean-dep
+
+skull:
+	cd ./deps/skull && make
+
+install-skull:
+	cd ./deps/skull && make install
+
+clean-skull:
+	cd ./deps/skull && make clean
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
@@ -108,7 +117,7 @@ prepare_deploy_files:
 
 .PHONY: build check valgrind-check ft-check deploy clean prepare_deploy
 .PHONY: prepare_deploy_dirs prepare_deploy_files help dep install-dep
-.PHONY: clean-dep
+.PHONY: clean-dep skull install-skull clean-skull
 
 help:
 	@echo "make options:"
