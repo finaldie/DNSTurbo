@@ -2,10 +2,10 @@ import yaml
 import pprint
 import time
 
-from skullpy import *
+from skull import *
 
-from skull.common import *
-from skull.common.proto import *
+from common import *
+from common.proto import *
 
 from dnslib import *
 
