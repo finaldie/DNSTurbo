@@ -79,22 +79,22 @@ deploy: prepare_deploy
 	done
 
 dep:
-	cd ./deps/skull && make dep
+	cd ./deps/skull && $(MAKE) dep
 
 install-dep:
-	cd ./deps/skull && make install-dep
+	cd ./deps/skull && $(MAKE) install-dep
 
 clean-dep:
-	cd ./deps/skull && make clean-dep
+	cd ./deps/skull && $(MAKE) clean-dep
 
 skull:
-	cd ./deps/skull && make
+	cd ./deps/skull && $(MAKE)
 
 install-skull:
-	cd ./deps/skull && make install
+	cd ./deps/skull && $(MAKE) install
 
 clean-skull:
-	cd ./deps/skull && make clean
+	cd ./deps/skull && $(MAKE) clean
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
