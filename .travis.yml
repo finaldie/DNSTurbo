@@ -12,7 +12,7 @@ before_install:
     - cat /etc/issue
     - sudo apt-get update -qq
     - sudo apt-get install autoconf libtool valgrind expect libyaml-dev python3-dev python3-pip libc-ares-dev
-    - sudo pip install PyYAML pympler WebOb dnslib
+    - sudo pip3 install PyYAML pympler WebOb dnslib
     - gcc --version
     - g++ --version
     - clang --version
