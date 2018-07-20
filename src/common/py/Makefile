@@ -1,6 +1,6 @@
 TARGET := all
 
-COMMON_PARENT_DIR := $(DEPLOY_DIR)/lib/py/skull
+COMMON_PARENT_DIR := $(DEPLOY_DIR)/lib/py
 COMMON_DIR := $(COMMON_PARENT_DIR)/common
 
 # Include the basic Makefile targets
