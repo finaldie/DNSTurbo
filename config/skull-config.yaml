@@ -12,6 +12,9 @@ bg_iothreads: 1
 # Command port, which is used for exposing more skull information
 command_port: 7759
 
+# Command address bind to, by default is '127.0.0.1'
+# command_bind: '127.0.0.1'
+
 # Log File Name
 log_name: skull.log
 
@@ -36,6 +39,15 @@ languages: ['cpp', 'py']
 #  If failed to set due to permission reason, will fallback to the default value
 #
 #max_fds: 65535
+
+##
+# Slow log
+#  Unit: microsecond.
+#
+#  If the transaction exection time >= this threshold, engine will log the
+#  transaction details. If set to <= 0, the feature will be disabled.
+#
+# slowlog_ms: 0
 
 
 ##
