@@ -91,7 +91,7 @@ def module_pack(txn, txndata):
         logger.info('ModulePack', 'Peer: {}:{} {} ,Duration: {} ms ,filtered: {} ,Question: {} ,type: {}, {} Answers: {}'.format(
             peerName, peerPort, peerType, duration, nFiltered, question, qtype, nAnswers, ips))
 
-    txndata.append(answer.pack())
+    txndata.append(bytes(answer.pack()))
 
 ##
 # Module Runnable Entry, be called when this module be picked up in current
