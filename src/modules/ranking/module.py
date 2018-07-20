@@ -8,7 +8,7 @@ from skull.txn import *
 from common import *
 from common.proto import *
 
-import ranking
+from . import ranking
 
 CFG_MIN_TTL = 0
 CFG_MAX_TTL = 0
