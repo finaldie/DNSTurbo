@@ -43,8 +43,7 @@ sudo pip install PyYAML protobuf==2.6.1 pympler WebOb dnslib;
 # Fork/Clone and Build Project Dependencies (For example: project folder is 'DNSTurbo')
 cd DNSTurbo
 git submodule update --init --recursive
-make dep
-sudo make install-dep
+make dep; sudo make install-dep; make skull; sudo make install-skull;
 ```
 
 ## Build

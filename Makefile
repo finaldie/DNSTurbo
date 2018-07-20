@@ -1,6 +1,7 @@
 MAKE_FLAGS ?= -s
 MAKE ?= make
 MAKE += $(MAKE_FLAGS)
+DEP_FOLDER = ./deps/skull
 
 # global variables
 SKULL_SRCTOP := $(shell pwd)
@@ -79,13 +80,22 @@ deploy: prepare_deploy
 	done
 
 dep:
-	cd ./deps/skull && make dep && make
+	$(MAKE) -C $(DEP_FOLDER) dep
 
 install-dep:
-	cd ./deps/skull && make install-dep && make install
+	$(MAKE) -C $(DEP_FOLDER) install-dep
 
 clean-dep:
-	cd ./deps/skull && make clean-dep && make clean
+	$(MAKE) -C $(DEP_FOLDER) clean-dep
+
+skull:
+	$(MAKE) -C $(DEP_FOLDER)
+
+install-skull:
+	$(MAKE) -C $(DEP_FOLDER) install
+
+clean-skull:
+	$(MAKE) -C $(DEP_FOLDER) clean
 
 # skull utils' targets
 prepare_deploy: prepare_deploy_dirs prepare_deploy_files
@@ -108,7 +118,7 @@ prepare_deploy_files:
 
 .PHONY: build check valgrind-check ft-check deploy clean prepare_deploy
 .PHONY: prepare_deploy_dirs prepare_deploy_files help dep install-dep
-.PHONY: clean-dep
+.PHONY: clean-dep skull install-skull clean-skull
 
 help:
 	@echo "make options:"

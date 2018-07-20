@@ -1,4 +1,4 @@
-from skullpy import *
+from skull import *
 
 def _create_result_item(ip, ttl, latency, httpInfoCnt):
     return {

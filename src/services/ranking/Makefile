@@ -12,7 +12,7 @@ DEPS_LDFLAGS += \
 
 DEPS_LIBS += \
     -lprotobuf \
-    -lskullcpp-api \
+    -lskull-api-cpp \
     -lhttp_parser \
     -Wl,--no-as-needed \
     -lskull-common-cpp

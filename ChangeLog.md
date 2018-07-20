@@ -1,3 +1,5 @@
+* 2018-07-19 0.6.1
+   * Upgrade `skull` to 1.2
 * 2017-08-20 0.5.1
    * Upgrade `skull` to 1.1
    * Support ENV variable `SKULL_DNS_NS` to override name server
