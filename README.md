@@ -37,8 +37,8 @@ So, it's better to have another program to detect the quality of the DNS records
 ## Install Dependencies
 ```console
 # Install System Dependencies
-sudo apt-get install autoconf valgrind expect libyaml-dev python-dev python-pip libprotobuf-dev protobuf-compiler libprotobuf-c0-dev protobuf-c-compiler libc-ares-dev;
-sudo pip install PyYAML protobuf==2.6.1 pympler WebOb dnslib;
+sudo apt-get install autoconf valgrind expect libyaml-dev python3-dev python3-pip libc-ares-dev;
+sudo pip3 install PyYAML pympler WebOb dnslib;
 
 # Fork/Clone and Build Project Dependencies (For example: project folder is 'DNSTurbo')
 cd DNSTurbo

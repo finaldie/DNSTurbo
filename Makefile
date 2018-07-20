@@ -4,14 +4,14 @@ MAKE += $(MAKE_FLAGS)
 DEP_FOLDER = ./deps/skull
 
 # global variables
-SKULL_SRCTOP := $(shell pwd)
-export SKULL_SRCTOP
+export SKULL_SRCTOP := $(shell pwd)
+export python_path ?= /usr/bin/python3
 
 # Static variables
 SKULL_BIN_DIR = bin
 SKULL_CONFIG_DIR = config
 
-DEPLOY_DIR_ROOT ?= $(shell pwd)/run
+DEPLOY_DIR_ROOT ?= $(SKULL_SRCTOP)/run
 DEPLOY_BIN_ROOT := $(DEPLOY_DIR_ROOT)/bin
 DEPLOY_LIB_ROOT := $(DEPLOY_DIR_ROOT)/lib
 DEPLOY_LOG_ROOT := $(DEPLOY_DIR_ROOT)/log
