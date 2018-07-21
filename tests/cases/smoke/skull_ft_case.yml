@@ -37,6 +37,8 @@ run:
 
 verify:
     - echo "verify"
+    - cat ${RUN}/project/log/stdout.log || true
+    - cat ${RUN}/project/log/skull.log
     - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
     - dig www.google.com @127.0.0.1
     - dig www.google.com @127.0.0.1 | grep "google.com."
