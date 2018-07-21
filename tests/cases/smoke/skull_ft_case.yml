@@ -38,8 +38,8 @@ run:
 verify:
     - echo "verify"
     - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
-    - dig www.google.com
-    - dig www.google.com | grep "google.com."
+    - dig www.google.com @127.0.0.1
+    - dig www.google.com @127.0.0.1 | grep "google.com."
     - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response: 1"'
 
 post-verify:
