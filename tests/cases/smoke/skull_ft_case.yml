@@ -28,7 +28,7 @@ description: Smoke test, start DNSTurbo and do a dns query to check the response
 pre-run:
     - echo "pre-run"
     - skull build && skull build check && skull build valgrind-check
-    - sed 's/port: 53/port: 7758/g' skull-config.yaml
+    - 'sed -i "s/port: 53/port: 7758/g" config/skull-config.yaml'
     - skull deploy ./project
 
 run:
