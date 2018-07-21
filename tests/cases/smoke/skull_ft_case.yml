@@ -28,6 +28,7 @@ description: Smoke test, start DNSTurbo and do a dns query to check the response
 pre-run:
     - echo "pre-run"
     - skull build && skull build check && skull build valgrind-check
+    - sed 's/port: 53/port: 7758/g' skull-config.yaml
     - skull deploy ./project
 
 run:
@@ -40,8 +41,8 @@ verify:
     - cat ${RUN}/project/log/stdout.log || true
     - cat ${RUN}/project/log/skull.log
     - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
-    - dig www.google.com @127.0.0.1
-    - dig www.google.com @127.0.0.1 | grep "google.com."
+    - dig www.google.com @127.0.0.1 -p 7758
+    - dig www.google.com @127.0.0.1 -p 7758 | grep "google.com."
     - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response: 2"'
 
 post-verify:
