@@ -30,7 +30,7 @@ script:
     - sudo make install-skull
     - skull build
     - skull deploy
-    - sudo skull start -D
+    - skull build ft-check
 
 after_success: true
 
