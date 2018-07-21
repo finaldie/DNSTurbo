@@ -96,7 +96,7 @@ void _cronjob(const skullcpp::Service& service) {
     // Status
     if (gRound % conf.status_interval() == 0) {
         const std::string statusStr = cache->status();
-        SKULLCPP_LOG_INFO("Cache status", statusStr);
+        SKULLCPP_LOG_INFO("CacheStatus", statusStr);
     }
 
     // Continue cronjob

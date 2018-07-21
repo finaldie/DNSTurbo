@@ -23,7 +23,7 @@
 #                     Run `skullft_mock_ep -h` for the help
 #
 
-description: An example test case, deploy the current project, then verify there is no errors during the testing
+description: Smoke test, start DNSTurbo and do a dns query to check the response
 
 pre-run:
     - echo "pre-run"
@@ -33,19 +33,14 @@ pre-run:
 run:
     - echo "run"
     - cd project && skull start ./ -D
-    - sleep 1
+    - sleep 2
 
 verify:
     - echo "verify"
-    - echo "hello skull" | nc 127.0.0.1 7758 -i 1 | grep "hello skull"
     - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
-    - 'cat ${RUN}/project/log/skull.log | grep "receive data: hello skull"'
-    - 'cat ${RUN}/project/log/skull.log | grep "module_pack(test): data sz:12"'
-    - 'cat ${RUN}/project/log/skull.log | grep "config test_item: 123"'
-    - 'cat ${RUN}/project/log/skull.log | grep "config test_rate: 1"'
-    - 'cat ${RUN}/project/log/skull.log | grep "config test_name: module"'
-    - 'cat ${RUN}/project/log/skull.log | grep "config test_bool: 1"'
-    - 'echo "metrics" | nc 127.0.0.1 7759 | grep "global.response: 1"'
+    - dig www.google.com
+    - dig www.google.com | grep "google.com."
+    - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response: 1"'
 
 post-verify:
     - echo "post-verify"
