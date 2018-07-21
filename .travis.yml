@@ -30,7 +30,7 @@ script:
     - sudo make install-skull
     - skull build
     - skull deploy
-    - skull build ft-check verbose=true
+    - skull build ft-check debug=true
 
 after_success: true
 
