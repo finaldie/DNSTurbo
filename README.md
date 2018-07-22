@@ -3,6 +3,8 @@
 ![license](https://img.shields.io/github/license/finaldie/dnsturbo.svg)
 ![GitHub release](https://img.shields.io/github/release/finaldie/dnsturbo.svg)
 ![GitHub tag](https://img.shields.io/github/tag/finaldie/dnsturbo.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/finaldie/DNSTurbo.svg)
+
 
 # DNSTurbo
 A middleware between browser and local DNS client/server, to speed up the Internet according to the network speed. It optimizes the A/AAAA records by latency detection mechanism, offer the best records the user wanted.
