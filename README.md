@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/finaldie/DNSTurbo.svg?branch=master)](https://travis-ci.org/finaldie/DNSTurbo)
+![Docker Pulls](https://img.shields.io/docker/pulls/finaldie/dnsturbo.svg)
+
 
 # DNSTurbo
 A middleware between browser and local DNS client/server, to speed up the Internet according to the network speed. It optimizes the A/AAAA records by latency detection mechanism, offer the best records the user wanted.
