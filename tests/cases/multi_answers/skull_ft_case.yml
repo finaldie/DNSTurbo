@@ -23,7 +23,7 @@
 #                     Run `skullft_mock_ep -h` for the help
 #
 
-description: Smoke test, start DNSTurbo and do a dns query to check the response
+description: Multi-answers test, start DNSTurbo and do a dns query to check the response
 
 pre-run:
     - echo "pre-run"
@@ -39,14 +39,16 @@ run:
 
 verify:
     - echo "verify"
-    - echo "verify google record, in generally it only returns one answer"
+    - echo "verify docker record, in generally it returns multiple answers"
     - cat ${RUN}/project/log/stdout.log || true
     - cat ${RUN}/project/log/skull.log
     - cat ${RUN}/project/log/skull.log | grep "skull engine is ready"
-    - dig www.google.com @127.0.0.1 -p 7758
-    - dig www.google.com @127.0.0.1 -p 7758 | grep "google.com."
+    - dig registry.docker.io @127.0.0.1 -p 7758
+    - dig registry.docker.io @127.0.0.1 -p 7758 | grep "registry-1.docker.io."
     - cat ${RUN}/project/log/skull.log
     - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response: 2"'
+    - cat ${RUN}/project/log/stdout.log || true
+    - cat ${RUN}/project/log/skull.log
 
 post-verify:
     - echo "post-verify"

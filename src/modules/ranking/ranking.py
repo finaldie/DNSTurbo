@@ -11,6 +11,7 @@ def _create_result_item(ip, ttl, latency, httpInfoCnt):
 def _item_cmp(left, right):
     return left['avgLatency'] - right['avgLatency']
 
+# Score each record, and return a list of record with ascending order latency
 def score(records):
     scoringTmp = []
 
@@ -51,17 +52,18 @@ def score(records):
     if logger.isDebugEnabled():
        logger.debug("scoringTmp: {}".format(scoringTmp))
 
-    scoringResults = sorted(scoringTmp, _item_cmp)
+    scoringResults = sorted(scoringTmp, key = lambda record: record['avgLatency'])
 
     if logger.isDebugEnabled():
         logger.debug("scoringResults: {}".format(scoringResults))
 
     return scoringResults
 
+# Rank and filter high latency record
 def rank(scoringResults, low_latency_bar, latency_factor):
     rankingResults = []
 
-    # 1. checking total record coount
+    # 1. checking total record count
     nrecords = len(scoringResults)
 
     if nrecords <= 1:
@@ -88,6 +90,8 @@ def rank(scoringResults, low_latency_bar, latency_factor):
         if factor <= latency_factor:
             rankingResults.append(scoringRecord)
         else:
+            logger.info("Ranking terminated at latency: {}, factor: {}, base: {}".format(
+                latency, factor, baseRecordLatency));
             break
 
     nRankingRecords = len(rankingResults)
