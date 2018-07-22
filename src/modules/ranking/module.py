@@ -99,7 +99,7 @@ def _ranking_response(txn, iostatus, api_name, request_msg, response_msg):
     rankingResults, filtered = ranking.rank(scoringResults, CFG_LOW_LATENCY_BAR,
             CFG_LATENCY_FACTOR)
 
-    logger.info("Ranking", "question: {} ,total: {} ,filtered {} ,Results: {}".format(
+    logger.info("{Ranking}", "question: {} ,total: {} ,filtered {} ,Results: {}".format(
         request_msg.question, len(scoringResults), filtered, rankingResults))
 
     global CFG_MIN_TTL
