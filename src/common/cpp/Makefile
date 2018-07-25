@@ -1,20 +1,22 @@
 # Include the basic Makefile template
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.cpp.inc
+include $(shell skull-config --cpp-inc)
 
-# Include folders
-INC +=
+# Implicit include .Makefile.inc from top folder if exist
+-include $(SKULL_SRCTOP)/.Makefile.inc
+
+# Including folders
+INC += \
+    $(shell skull-config --common-includes)
 
 # User ldflags and dependency libraries
-DEPS_LDFLAGS +=
+DEPS_LDFLAGS += \
+    $(shell skull-config --common-ldflags)
+
 DEPS_LIBS += \
-    -lskull-api-cpp \
-    -Wl,--no-as-needed \
-    -lprotobuf
+    $(shell skull-config --common-libs)
 
 TEST_DEPS_LIBS += \
-    -lskull-unittest-cpp \
-    -lskull-unittest-c \
-    -lprotobuf
+    $(shell skull-config --common-libs)
 
 # Source files
 SRCS = $(shell find src -name "*.c*")
@@ -32,7 +34,7 @@ VALGRIND := valgrind --tool=memcheck --leak-check=full \
     --gen-suppressions=all --error-exitcode=1
 
 # Include the basic Makefile targets
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.common.cpp.targets
+include $(shell skull-config --cpp-common-targets)
 
 # Notes: There are some available targets we can use if needed
 #  prepare - This one is called before compilation

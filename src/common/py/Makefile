@@ -1,10 +1,11 @@
-TARGET := all
+# Include the basic Makefile template
+include $(shell skull-config --py-inc)
 
-COMMON_PARENT_DIR := $(DEPLOY_DIR)/lib/py
-COMMON_DIR := $(COMMON_PARENT_DIR)/common
+# Implicit include .Makefile.inc from top folder if exist
+-include $(SKULL_SRCTOP)/.Makefile.inc
 
 # Include the basic Makefile targets
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.common.py.targets
+include $(shell skull-config --py-common-targets)
 
 # Notes: There are some available targets we can use if needed
 #  prepare - This one is called before compilation

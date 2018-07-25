@@ -1,13 +1,11 @@
+# Include the basic Makefile template
+include $(shell skull-config --py-inc)
 
-TARGET := all
-MODULE_NAME ?= $(shell basename $(shell pwd))
-CONF_TARGET ?= skull-modules-$(MODULE_NAME).yaml
-
-MODULE_PARENT_DIR := $(DEPLOY_DIR)/lib/py/modules
-MODULE_DIR := $(MODULE_PARENT_DIR)/$(MODULE_NAME)
+# Implicit include .Makefile.inc from top folder if exist
+-include $(SKULL_SRCTOP)/.Makefile.inc
 
 # Include the basic Makefile targets
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.mod.py.targets
+include $(shell skull-config --py-targets)
 
 # Notes: There are some available targets we can use if needed
 #  prepare - This one is called before compilation

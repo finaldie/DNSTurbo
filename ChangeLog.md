@@ -1,3 +1,9 @@
+* 2018-07-25 0.7.1
+   * Upgrade skull to 1.2.2
+* 2018-07-21 0.6.3
+   * Bug fixes and fully adopt `skull` 1.2.1
+* 2018-07-21 0.6.2
+   * Bug fixes
 * 2018-07-19 0.6.1
    * Upgrade `skull` to 1.2
 * 2017-08-20 0.5.1
