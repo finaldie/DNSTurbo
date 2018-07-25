@@ -34,7 +34,7 @@ TEST_SRCS = \
 # valgrind suppresion file
 #  note: if the suppresion file is exist, then need to append
 #        `--suppresions=$(SUPPRESION)` to `VALGRIND`
-SUPPRESION :=
+SUPPRESION := $(GLOBAL_SUPPRESSION)
 
 # valgrind command
 VALGRIND := valgrind --tool=memcheck --leak-check=full -v \
