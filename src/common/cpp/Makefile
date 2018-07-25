@@ -16,7 +16,7 @@ DEPS_LIBS += \
     $(shell skull-config --common-libs)
 
 TEST_DEPS_LIBS += \
-    $(shell skull-config --common-libs)
+    $(shell skull-config --common-test-libs)
 
 # Source files
 SRCS = $(shell find src -name "*.c*")
