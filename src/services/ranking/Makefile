@@ -1,28 +1,24 @@
 # Include the basic Makefile template
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.cpp.inc
+include $(shell skull-config --cpp-inc)
+
+# Implicit include .Makefile.inc from top folder if exist
+-include $(SKULL_SRCTOP)/.Makefile.inc
 
 INC += \
-    -Isrc \
-    -I../../common/cpp/src \
-    -I$(SKULL_SRCTOP)/deps/http-parser
+    -I$(SKULL_SRCTOP)/deps/http-parser \
+    $(shell skull-config --includes)
 
 DEPS_LDFLAGS += \
-    -L../../common/cpp/lib \
-    -L$(SKULL_SRCTOP)/deps/http-parser
+    -L$(SKULL_SRCTOP)/deps/http-parser \
+    $(shell skull-config --ldflags)
 
 DEPS_LIBS += \
-    -lprotobuf \
-    -lskull-api-cpp \
     -lhttp_parser \
-    -Wl,--no-as-needed \
-    -lskull-common-cpp
+    $(shell skull-config --libs)
 
 TEST_DEPS_LIBS += \
-    -lprotobuf \
     -lhttp_parser \
-    -lskull-common-cpp \
-    -lskull-unittest-cpp \
-    -lskull-unittest-c
+    $(shell skull-config --test-libs)
 
 # Objs and deployment related items
 SRCS = \
@@ -36,16 +32,10 @@ TEST_SRCS = \
     tests/test_service.cpp
 
 # valgrind suppresion file
-#  note: if the suppresion file is exist, then need to append
-#        `--suppresions=$(SUPPRESION)` to `VALGRIND`
-SUPPRESION :=
-
-# valgrind command
-VALGRIND := valgrind --tool=memcheck --leak-check=full -v \
-    --gen-suppressions=all --error-exitcode=1
+SUPPRESSION +=
 
 # Include the basic Makefile targets
-include $(SKULL_SRCTOP)/.skull/makefiles/Makefile.cpp.targets
+include $(shell skull-config --cpp-targets)
 
 # Notes: There are some available targets we can use if needed
 #  prepare - This one is called before compilation

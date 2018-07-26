@@ -149,6 +149,8 @@ static
 void ranking(const skullcpp::Service& service,
              const google::protobuf::Message& request,
              google::protobuf::Message& response) {
+    SKULLCPP_LOG_DEBUG("Ranking query received");
+
     const auto* rankingCache = (RankingCache*)service.get();
     const auto& rankReq = (const rank_req&)request;
     RankingCache::QTYPE qtype = rankReq.qtype() == 1
@@ -177,6 +179,7 @@ void ranking(const skullcpp::Service& service,
     // Rank it via a service job
     const std::string& question = rankReq.question();
     skullcpp::Service::JobNPW updateFunc = [question, records] (skullcpp::Service& service) {
+        SKULLCPP_LOG_DEBUG("Add records into ranking cache");
         auto* cache = (RankingCache*)service.get();
         cache->addIntoCache(service, question, records);
     };
