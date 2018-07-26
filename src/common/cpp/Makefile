@@ -25,14 +25,7 @@ SRCS = $(shell find src -name "*.c*")
 TEST_SRCS = $(shell find tests -name "*.cpp")
 
 # valgrind suppresion file
-#  note: if the suppresion file is exist, then need to append
-#        `--suppresions=$(SUPPRESION)` to `VALGRIND`
-SUPPRESSION += $(GLOBAL_SUPPRESSION)
-
-# valgrind command
-VALGRIND ?= valgrind --tool=memcheck --leak-check=full \
-    --suppressions=$(SUPPRESSION) \
-    --gen-suppressions=all --error-exitcode=1
+SUPPRESSION +=
 
 # Include the basic Makefile targets
 include $(shell skull-config --cpp-common-targets)
