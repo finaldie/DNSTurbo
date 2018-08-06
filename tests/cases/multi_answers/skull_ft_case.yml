@@ -30,7 +30,9 @@ pre-run:
     - skull build && skull build check && skull build valgrind-check
     - skull deploy ./project
     - 'sed -i "s/port: 53/port: 7758/g" project/skull-config.yaml'
-    - 'sed -i "s/log_level: info/log_level: debug/g" project/skull-config.yaml'
+    - 'sed -i "s/log_level: info/log_level: debug/g" ${RUN}/project/skull-config.yaml'
+    - echo "Dump full skull-config -->"
+    - cat ${RUN}/project/skull-config.yaml
 
 run:
     - echo "run"
