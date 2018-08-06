@@ -67,8 +67,8 @@ The [**_Docker images_**][3] are ready now, if people who don't want to waste ti
 
 Assume that we've already [installed _Docker_][1], then apply the below commands:
 ```console
-bash$> docker pull finaldie/dnsturbo:0.6
-bash$> docker run -p 53:53/udp finaldie/dnsturbo:0.6
+bash$> docker pull finaldie/dnsturbo:0.7
+bash$> docker run -p 53:53/udp finaldie/dnsturbo:0.7
 ```
 
 ![DNSTurbo-Docker][2]

@@ -24,9 +24,9 @@ install: true
 before_script: true
 
 script:
-    - make dep -j4 disable_fast_proto=true
+    - make dep -j8 disable_fast_proto=true
     - sudo env PATH=$PATH make install-dep disable_fast_proto=true
-    - make skull -j4
+    - make skull -j8
     - sudo make install-skull
     - skull build
     - skull deploy
