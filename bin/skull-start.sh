@@ -1,9 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 ulimit -c unlimited
 
 ##################################### Utils ####################################
+setup_env() {
+    skull_bin=`which skull-engine`
+    if [ $? -ne 0 ]; then
+        echo "Error: Not found skull-engine, install it first. Abort" >&2
+        exit 1
+    fi
+}
+
 usage() {
     echo "usage:"
     echo "  skull-start.sh -c config [-D|--memcheck|--gdb|--strace|--massif|--no-log-rolling|--std-fowarding]"
@@ -20,15 +28,19 @@ skull_start() {
     fi
 
     if ! $daemon; then
-        exec skull-engine -c $skull_config $args
+        exec $skull_bin -c $skull_config $args
     else
-        exec skull-engine -c $skull_config $args -D > log/stdout.log 2>&1 < /dev/null
+        exec $skull_bin -c $skull_config $args -D > log/stdout.log 2>&1 < /dev/null
     fi
 }
 
 skull_start_memcheck() {
     # Generate suppression argument
-    local supp_files=`ls bin/*.supp`
+    local sys_path=`skull-config --valgrind-dir`
+    local local_path="bin"
+
+    local supp_files=`ls ${sys_path}/*.supp`
+    supp_file+=`find ${local_path} -name "*.supp"`
     local supp_arg=""
 
     for supp_file in $supp_files; do
@@ -38,23 +50,23 @@ skull_start_memcheck() {
     # Run valgrind to start skull
     exec valgrind --tool=memcheck --leak-check=full --num-callers=50 -v \
         ${supp_arg} \
-        skull-engine -c $skull_config
+        $skull_bin -c $skull_config
 }
 
 skull_start_gdb() {
     echo "After gdb started, type 'run -c $skull_config'"
     echo ""
-    exec gdb skull-engine
+    exec gdb $skull_bin
 }
 
 skull_start_strace() {
-    exec strace -f skull-engine -c $skull_config
+    exec strace -f $skull_bin -c $skull_config
 }
 
 skull_start_massif() {
     echo "After profiling, run 'ms_print massif.out.pid' to analyze the result"
     echo ""
-    exec valgrind --tool=massif skull-engine -c $skull_config
+    exec valgrind --tool=massif $skull_bin -c $skull_config
 }
 ################################## End of Utils ################################
 
@@ -73,6 +85,9 @@ massif=false
 daemon=false
 no_log_rolling=false
 std_forwarding=false
+skull_bin=
+
+setup_env
 
 args=`getopt -a \
         -o c:Dnh \
