@@ -10,7 +10,7 @@
 
 #include "RankingCache.h"
 
-#define SERVICE_CRON_INTERVAL (1000)
+#define CRON_INTERVAL (1000)
 
 using namespace skull::service::ranking;
 
@@ -26,18 +26,12 @@ static
 void _cleanupError(const skullcpp::Service& service) {
     SKULLCPP_LOG_ERROR("_cleanupError", "_cleanup error occurred",
         "Reduce the service load or increase the service task queue size");
-
-    service.createJob(SERVICE_CRON_INTERVAL, 1,
-                      skull_BindSvcJobNPW(_rankingCacheCleanup), _cleanupError);
 }
 
 static
 void _cronjobError(const skullcpp::Service& service) {
     SKULLCPP_LOG_ERROR("_cronjobError", "_cronjob error occurred",
         "Reduce the service load or increase the service task queue size");
-
-    service.createJob(SERVICE_CRON_INTERVAL, 1,
-                      skull_BindSvcJobNPW(_cronjob), _cronjobError);
 }
 
 static
@@ -88,7 +82,8 @@ void _cronjob(const skullcpp::Service& service) {
         gLatencyProcessed += count;
 
         if (gLatencyRound % totalLatencyRound  == 0) {
-            service.createJob((uint32_t)conf.latency_detection_interval() * 1000, 1,
+            uint32_t interval = conf.latency_detection_interval() * 1000;
+            service.createJob(interval, 1,
                     skull_BindSvcJobNPW(_rankingCacheCleanup), _cleanupError);
         }
     }
@@ -98,9 +93,6 @@ void _cronjob(const skullcpp::Service& service) {
         const std::string statusStr = cache->status();
         SKULLCPP_LOG_INFO("CacheStatus", statusStr);
     }
-
-    // Continue cronjob
-    service.createJob(SERVICE_CRON_INTERVAL, 1, skull_BindSvcJobNPR(_cronjob), _cronjobError);
 }
 
 // ====================== Service Init/Release =================================
@@ -119,8 +111,8 @@ int  skull_service_init(skullcpp::Service& service, const skull_config_t* config
     service.set(new RankingCache());
 
     // Set up service cron job
-    service.createJob(SERVICE_CRON_INTERVAL, 1,
-                      skull_BindSvcJobNPR(_cronjob), NULL);
+    service.createJob(CRON_INTERVAL, CRON_INTERVAL, 1,
+                      skull_BindSvcJobNPR(_cronjob), _cronjobError);
     return 0;
 }
 

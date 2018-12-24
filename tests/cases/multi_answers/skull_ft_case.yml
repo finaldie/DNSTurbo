@@ -48,7 +48,7 @@ verify:
     - dig registry.docker.io @127.0.0.1 -p 7758
     - dig registry.docker.io @127.0.0.1 -p 7758 | grep "registry.docker.io."
     - cat ${RUN}/project/log/skull.log
-    - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response: 2"'
+    - 'echo "metrics" | nc 0 7759 -w 1 | grep "global.response" | grep "2"'
     - cat ${RUN}/project/log/stdout.log || true
     - cat ${RUN}/project/log/skull.log
 

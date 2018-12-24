@@ -1,3 +1,7 @@
+* 2018-12-23 0.8.1
+   * Upgrade `skull` to 1.4.1
+   * Upgrade `proto` to proto3
+   * Make background service job more accurate
 * 2018-08-20 0.7.3
    * Upgrade `skull` to 1.3.1
 * 2018-08-05 0.7.2
