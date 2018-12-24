@@ -71,7 +71,7 @@ languages: ['cpp', 'py']
 #
 workflows:
 - bind: 0.0.0.0
-  concurrent: 1
+  concurrency: 1
   idl: dnstxn
   modules: ['request:py', 'dns_ask:py', 'ranking:py', 'response:py']
   port: 53

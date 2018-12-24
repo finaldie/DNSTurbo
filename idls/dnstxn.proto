@@ -6,20 +6,22 @@
 //  - Do not recommend to use 'required' field, if you really
 //     want to use it, make sure to fill it before use it
 
+syntax = "proto3";
+
 package skull.workflow;
 
 message dnstxn {
-    optional string    question      = 1;
-    optional int32     qtype         = 2; // 1: A, 2: AAAA
-    optional int32     requestId     = 3;
-    optional bytes     rawRequest    = 4;
+    string   question   = 1;
+    int32    qtype      = 2; // 1: A, 2: AAAA
+    int32    requestId  = 3;
+    bytes    rawRequest = 4;
     repeated DnsRecord record        = 5;
     repeated DnsRecord rankingRecord = 6;
 
-    optional double    startTime     = 7; // e.g. 1482384764.770653
+    double startTime    = 7; // e.g. 1482384764.770653
 }
 
 message DnsRecord {
-    optional string ip  = 1;
-    optional int32  ttl = 2;
+    string ip  = 1;
+    int32  ttl = 2;
 }

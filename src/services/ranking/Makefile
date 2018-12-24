@@ -45,10 +45,10 @@ include $(shell skull-config --cpp-targets)
 #  clean   - This one is called when cleanup be triggered
 
 build_http_parser:
-	cd $(SKULL_SRCTOP)/deps/http-parser && make package CFLAGS_FAST_EXTRA+=-fPIC
+	cd $(SKULL_SRCTOP)/deps/http-parser && $(MAKE) package CFLAGS_FAST_EXTRA+=-fPIC
 
 clean_http_parser:
-	cd $(SKULL_SRCTOP)/deps/http-parser && make clean
+	cd $(SKULL_SRCTOP)/deps/http-parser && $(MAKE) clean
 
 prepare: build_http_parser
 

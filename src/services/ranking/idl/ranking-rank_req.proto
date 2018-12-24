@@ -5,16 +5,18 @@
 //  - Do not recommend to use 'requried' field, if you really want to use it,
 //     make sure it be filled
 
+syntax = "proto3";
+
 package skull.service.ranking;
 
 message rank_req {
-    optional string question  = 1;
-    optional int32  qtype     = 2; // 1: A, 2: AAAA
+    string question  = 1;
+    int32  qtype     = 2; // 1: A, 2: AAAA
 
     repeated RankingRecord rRecord = 3;
 }
 
 message RankingRecord {
-    optional string ip          = 1;
-    optional int32  expiredTime = 2;
+    string ip          = 1;
+    int32  expiredTime = 2;
 }
