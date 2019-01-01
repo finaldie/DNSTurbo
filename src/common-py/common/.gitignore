@@ -1,0 +1,16 @@
+# protobuf files
+*.pb*.py
+*.proto
+
+# generated metrics source files
+metrics.py
+
+# generated idl header files
+protos.py
+proto/*
+
+# compiled file for ycm
+.ycm_extra_conf.pyc
+
+# python compiled files
+*.pyc
