@@ -1,3 +1,6 @@
+* 2019-01-01 0.8.2
+   * Upgrade `skull` to 1.4.2
+   * Refine code structure
 * 2018-12-23 0.8.1
    * Upgrade `skull` to 1.4.1
    * Upgrade `proto` to proto3

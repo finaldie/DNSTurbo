@@ -18,12 +18,14 @@ DEPLOY_LOG_ROOT := $(DEPLOY_DIR_ROOT)/log
 DEPLOY_ETC_ROOT := $(DEPLOY_DIR_ROOT)/etc
 
 # Get all the sub dirs which have Makefile
-COMMONS := $(shell find src/common -maxdepth 2 -name Makefile)
+COMMON-PY  := $(shell test -d src/common-py  && find src/common-py  -maxdepth 2 -name Makefile)
+COMMON-CPP := $(shell test -d src/common-cpp && find src/common-cpp -maxdepth 1 -name Makefile)
 MODS := $(shell find src/modules -maxdepth 2 -name Makefile)
 SRVS := $(shell find src/services -maxdepth 2 -name Makefile)
 
 SUBS = \
-    $(COMMONS) \
+    $(COMMON-PY) \
+    $(COMMON-CPP) \
     $(MODS) \
     $(SRVS)
 

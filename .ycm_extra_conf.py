@@ -29,7 +29,18 @@
 # For more information, please refer to <http://unlicense.org/>
 
 import os
+import os.path as p
 import ycm_core
+
+DIR_OF_THIS_SCRIPT = p.abspath(p.dirname(__file__))
+
+def PythonSysPath(**kwargs):
+  sys_path: list = kwargs['sys_path']
+
+  dependencies = [p.join(DIR_OF_THIS_SCRIPT, 'src', 'common-py')]
+  sys_path[0:0] = dependencies
+
+  return sys_path
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
