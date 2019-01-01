@@ -1,14 +1,16 @@
-import yaml
 import pprint
 import time
 
-from skull import *
-from skull.txn import *
+from dnslib import DNSRecord
+from dnslib import QTYPE
+from dnslib import RR
+from dnslib import A
+from dnslib import AAAA
+from skull import logger
+from skull.txn import Txn
 
-from common import *
-from common.proto import *
+from common import metrics
 
-from dnslib import *
 
 ##
 # Module Init Entry, be called when start phase
@@ -20,12 +22,14 @@ def module_init(config):
     logger.info('0', 'config: {}'.format(pprint.pformat(config)))
     return True
 
+
 ##
 # Module Release Function, be called when shutdown phase
 #
 def module_release():
     logger.debug("Response module release")
     return
+
 
 ##
 # Input data unpack function, be called if this module is the 'last' module in
@@ -38,16 +42,16 @@ def module_release():
 # @return How many bytes be consumed
 #
 def module_pack(txn, txndata):
-    #logger.debug("response module pack")
+    # logger.debug("response module pack")
 
     sharedData = txn.data()
-    req      = DNSRecord.parse(sharedData.rawRequest)
-    answer   = req.reply()
+    req = DNSRecord.parse(sharedData.rawRequest)
+    answer = req.reply()
     question = sharedData.question
-    qtype    = QTYPE[req.q.qtype]
+    qtype = QTYPE[req.q.qtype]
 
     module_counter = metrics.module()
-    qtype_counter  = metrics.qtype(qtype)
+    qtype_counter = metrics.qtype(qtype)
 
     client = txn.client()
     peerName = client.name()
@@ -56,9 +60,12 @@ def module_pack(txn, txndata):
 
     # Assemble response
     if txn.status() != Txn.TXN_OK:
-        logger.error('ModulePack', 'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type: {}'.format(
-            question, peerName, peerPort, peerType, qtype),
-            'Please check previous errors/exceptions')
+        logger.error(
+            'ModulePack',
+            'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type:\
+            {}'
+            .format(question, peerName, peerPort, peerType,
+                    qtype), 'Please check previous errors/exceptions')
 
         # Increase error counter
         module_counter.error.inc(1)
@@ -66,15 +73,23 @@ def module_pack(txn, txndata):
     else:
         # Assemble DNS response
         nRawRecords = len(sharedData.record)
-        nAnswers    = len(sharedData.rankingRecord)
-        nFiltered   = nRawRecords - nAnswers
+        nAnswers = len(sharedData.rankingRecord)
+        nFiltered = nRawRecords - nAnswers
         ips = []
 
         for record in sharedData.rankingRecord:
             if req.q.qtype == QTYPE.A:
-                answer.add_answer(RR(question, req.q.qtype, rdata = A(record.ip), ttl=record.ttl))
+                answer.add_answer(
+                    RR(question,
+                       req.q.qtype,
+                       rdata=A(record.ip),
+                       ttl=record.ttl))
             elif req.q.qtype == QTYPE.AAAA:
-                answer.add_answer(RR(question, req.q.qtype, rdata = AAAA(record.ip), ttl=record.ttl))
+                answer.add_answer(
+                    RR(question,
+                       req.q.qtype,
+                       rdata=AAAA(record.ip),
+                       ttl=record.ttl))
 
             ips.append((record.ip, record.ttl))
 
@@ -88,10 +103,15 @@ def module_pack(txn, txndata):
         qtype_counter.total_filtered.inc(nFiltered)
 
         duration = (time.time() - sharedData.startTime) * 1000
-        logger.info('ModulePack', 'Peer: {}:{} {} ,Duration: {} ms ,filtered: {} ,Question: {} ,type: {}, {} Answers: {}'.format(
-            peerName, peerPort, peerType, duration, nFiltered, question, qtype, nAnswers, ips))
+        logger.info(
+            'ModulePack',
+            'Peer: {}:{} {} ,Duration: {} ms ,filtered: {} ,Question: {} \
+            ,type: {}, {} Answers: {}'
+            .format(peerName, peerPort, peerType, duration, nFiltered,
+                    question, qtype, nAnswers, ips))
 
     txndata.append(bytes(answer.pack()))
+
 
 ##
 # Module Runnable Entry, be called when this module be picked up in current
@@ -102,6 +122,5 @@ def module_pack(txn, txndata):
 # @return - True if no error
 #         - False if error occurred
 def module_run(txn):
-    #logger.debug("response module run")
+    # logger.debug("response module run")
     return True
-

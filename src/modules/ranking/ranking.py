@@ -1,15 +1,18 @@
-from skull import *
+from skull import logger
+
 
 def _create_result_item(ip, ttl, latency, httpInfoCnt):
     return {
-        'ip' : ip,
+        'ip': ip,
         'ttl': ttl,
         'avgLatency': latency,  # Integer
         'httpInfoCnt': httpInfoCnt
     }
 
+
 def _item_cmp(left, right):
     return left['avgLatency'] - right['avgLatency']
+
 
 # Score each record, and return a list of record with ascending order latency
 def score(records):
@@ -29,14 +32,15 @@ def score(records):
             #  0: OK
             #  1: ERROR
             #  2. TIMEOUT
-            status   = httpInfo.status
+            status = httpInfo.status
             httpCode = httpInfo.httpCode
-            latency  = httpInfo.latency
+            latency = httpInfo.latency
 
             if status != 1:
                 totalLatency += latency
             else:
-                totalLatency += 2000 # For error connection record, increase 2000ms
+                # For error connection record, increase 2000ms
+                totalLatency += 2000
 
             validRecords += 1
 
@@ -46,18 +50,21 @@ def score(records):
         if validRecords > 0:
             avgLatency = int(totalLatency / validRecords)
 
-        scoringTmp.append(_create_result_item(ip, ttl, avgLatency, validRecords))
+        scoringTmp.append(
+            _create_result_item(ip, ttl, avgLatency, validRecords))
 
     # Ranking
     if logger.isDebugEnabled():
-       logger.debug("scoringTmp: {}".format(scoringTmp))
+        logger.debug("scoringTmp: {}".format(scoringTmp))
 
-    scoringResults = sorted(scoringTmp, key = lambda record: record['avgLatency'])
+    scoringResults = sorted(
+        scoringTmp, key=lambda record: record['avgLatency'])
 
     if logger.isDebugEnabled():
         logger.debug("scoringResults: {}".format(scoringResults))
 
     return scoringResults
+
 
 # Rank and filter high latency record
 def rank(scoringResults, low_latency_bar, latency_factor):
@@ -69,8 +76,8 @@ def rank(scoringResults, low_latency_bar, latency_factor):
     if nrecords <= 1:
         return scoringResults, 0
 
-    # 2. Keep latency <= 20ms, otherwise filter the record shouldn't larger than
-    #  1.5x of the first record
+    # 2. Keep latency <= 20ms, otherwise filter the record shouldn't larger
+    # than 1.5x of the first record
     baseRecord = None
     baseRecordLatency = 0
 
@@ -90,8 +97,10 @@ def rank(scoringResults, low_latency_bar, latency_factor):
         if factor <= latency_factor:
             rankingResults.append(scoringRecord)
         else:
-            logger.info("{RankingUtil}", "Ranking terminated at latency: {}, factor: {}, base: {}".format(
-                latency, factor, baseRecordLatency));
+            logger.info(
+                "{RankingUtil}",
+                "Ranking terminated at latency: {}, factor: {}, base: {}".
+                format(latency, factor, baseRecordLatency))
             break
 
     nRankingRecords = len(rankingResults)

@@ -1,11 +1,11 @@
-import yaml
 import pprint
 
-from skull import *
-from skull.txn import *
+from skull import logger
+from skull.txn import Txn
 
 from common import *
-from common.proto import *
+from common.proto import service_dns_query_req_pto
+
 
 ##
 # Module Init Entry, be called when start phase
@@ -17,12 +17,14 @@ def module_init(config):
     logger.info('ModuleInit', 'config: {}'.format(pprint.pformat(config)))
     return True
 
+
 ##
 # Module Release Function, be called when shutdown phase
 #
 def module_release():
     logger.debug("dns_ask module release")
     return
+
 
 ##
 # Module Runnable Entry, be called when this module be picked up in current
@@ -51,6 +53,7 @@ def module_run(txn):
         logger.error("DNS_E1", "Dns iocall failed, ret: {}".format(ret))
         return False
 
+
 def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
     if iostatus != Txn.IO_OK:
         logger.error("DNS_E2", "Dns response IO error: {}".format(iostatus))
@@ -60,9 +63,11 @@ def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
 
     for record in response_msg.record:
         if logger.isDebugEnabled():
-            logger.debug("For question: {}, qtype: {}, got ip: {}, ttl: {}".format(
-                sharedData.question, sharedData.qtype, record.ip, record.ttl))
+            logger.debug(
+                "For question: {}, qtype: {}, got ip: {}, ttl: {}".format(
+                    sharedData.question, sharedData.qtype, record.ip,
+                    record.ttl))
 
-        sharedData.record.add(ip = record.ip, ttl = record.ttl)
+        sharedData.record.add(ip=record.ip, ttl=record.ttl)
 
     return True
