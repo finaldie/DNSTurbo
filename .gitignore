@@ -37,3 +37,5 @@ cscope.*
 # deployment directory
 run/**
 tests/run/**
+
+compile_commands.json
