@@ -105,8 +105,8 @@ def module_pack(txn, txndata):
         duration = (time.time() - sharedData.startTime) * 1000
         logger.info(
             'ModulePack',
-            'Peer: {}:{} {} ,Duration: {} ms ,filtered: {} ,Question: {} \
-            ,type: {}, {} Answers: {}'
+            'Peer: {}:{} {} ,Duration: {:.3f} ms ,filtered: {} ,Question: {} '
+            ',type: {}, {} Answers: {}'
             .format(peerName, peerPort, peerType, duration, nFiltered,
                     question, qtype, nAnswers, ips))
 
