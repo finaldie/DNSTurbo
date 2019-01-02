@@ -1,3 +1,6 @@
+* 2019-01-01 0.8.3
+   * Upgrade `skull` to 1.4.3
+   * Refine python style
 * 2019-01-01 0.8.2
    * Upgrade `skull` to 1.4.2
    * Refine code structure
