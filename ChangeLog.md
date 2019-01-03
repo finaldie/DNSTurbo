@@ -1,54 +1,56 @@
-* 2019-01-01 0.8.3
-   * Upgrade `skull` to 1.4.3
-   * Refine python style
-* 2019-01-01 0.8.2
-   * Upgrade `skull` to 1.4.2
-   * Refine code structure
-* 2018-12-23 0.8.1
-   * Upgrade `skull` to 1.4.1
-   * Upgrade `proto` to proto3
-   * Make background service job more accurate
-* 2018-08-20 0.7.3
-   * Upgrade `skull` to 1.3.1
-* 2018-08-05 0.7.2
-   * Upgrade `skull` to 1.2.3
-* 2018-07-25 0.7.1
-   * Upgrade `skull` to 1.2.2
-* 2018-07-21 0.6.3
-   * Bug fixes and fully adopt `skull` 1.2.1
-* 2018-07-21 0.6.2
-   * Bug fixes
-* 2018-07-19 0.6.1
-   * Upgrade `skull` to 1.2
-* 2017-08-20 0.5.1
-   * Upgrade `skull` to 1.1
-   * Support ENV variable `SKULL_DNS_NS` to override name server
-   * Docker Integration
-* 2017-06-22 0.4.3
-   * Upgrade `skull` to 1.0-rc3
-* 2017-06-19 0.4.2
-   * Fix dependency issue in ubuntu 16.04
-   * Add more logs for peer information
-   * Upgrade `skull` to 1.0-rc2
-   * Refine log format of response module
-* 2017-01-08 0.4.1
-   * Optimize ranking algo
-   * Upgrade skull-engine to latest version
-* 2016-12-18 0.3.3
-   * Tune the service parameters, optimize the performance
-* 2016-12-18 0.3.2
-   * Upgrade skull-engine to 0.9.6
-* 2016-12-15 0.3.1
-   * Upgrade skull-engine to 0.9.5
-   * Optimize the system performance
-   * Add status job and fix cleanup job errors
-   * Adjust latency factor to 1.05
-* 2016-12-12 0.2.2
-   * Fix AAAA record conversion issue
-* 2016-12-06 0.2.1
-   * Optimize AAAA record
-* 2016-11-30 0.1.1
-   * Optimize A record
-   * Http latency detection
-* 2016-11-16 0.1.0
-   * Initialization Version
+- 2019-01-02 0.9.1
+  - Refine logs
+- 2019-01-01 0.8.3
+  - Upgrade `skull` to 1.4.3
+  - Refine python style
+- 2019-01-01 0.8.2
+  - Upgrade `skull` to 1.4.2
+  - Refine code structure
+- 2018-12-23 0.8.1
+  - Upgrade `skull` to 1.4.1
+  - Upgrade `proto` to proto3
+  - Make background service job more accurate
+- 2018-08-20 0.7.3
+  - Upgrade `skull` to 1.3.1
+- 2018-08-05 0.7.2
+  - Upgrade `skull` to 1.2.3
+- 2018-07-25 0.7.1
+  - Upgrade `skull` to 1.2.2
+- 2018-07-21 0.6.3
+  - Bug fixes and fully adopt `skull` 1.2.1
+- 2018-07-21 0.6.2
+  - Bug fixes
+- 2018-07-19 0.6.1
+  - Upgrade `skull` to 1.2
+- 2017-08-20 0.5.1
+  - Upgrade `skull` to 1.1
+  - Support ENV variable `SKULL_DNS_NS` to override name server
+  - Docker Integration
+- 2017-06-22 0.4.3
+  - Upgrade `skull` to 1.0-rc3
+- 2017-06-19 0.4.2
+  - Fix dependency issue in ubuntu 16.04
+  - Add more logs for peer information
+  - Upgrade `skull` to 1.0-rc2
+  - Refine log format of response module
+- 2017-01-08 0.4.1
+  - Optimize ranking algo
+  - Upgrade skull-engine to latest version
+- 2016-12-18 0.3.3
+  - Tune the service parameters, optimize the performance
+- 2016-12-18 0.3.2
+  - Upgrade skull-engine to 0.9.6
+- 2016-12-15 0.3.1
+  - Upgrade skull-engine to 0.9.5
+  - Optimize the system performance
+  - Add status job and fix cleanup job errors
+  - Adjust latency factor to 1.05
+- 2016-12-12 0.2.2
+  - Fix AAAA record conversion issue
+- 2016-12-06 0.2.1
+  - Optimize AAAA record
+- 2016-11-30 0.1.1
+  - Optimize A record
+  - Http latency detection
+- 2016-11-16 0.1.0
+  - Initialization Version
