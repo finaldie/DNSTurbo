@@ -3,7 +3,6 @@ import pprint
 from skull import logger
 from skull.txn import Txn
 
-from common import *
 from common.proto import service_dns_query_req_pto
 
 
@@ -34,7 +33,7 @@ def module_release():
 #
 # @return - True if no error
 #         - False if error occurred
-def module_run(txn):
+def module_run(txn: Txn):
     logger.debug("dns_ask module run")
 
     sharedData = txn.data()
@@ -50,13 +49,17 @@ def module_run(txn):
     if ret == Txn.IO_OK:
         return True
     else:
-        logger.error("DNS_E1", "Dns iocall failed, ret: {}".format(ret))
+        logger.error(
+                "DNS_E1", "Dns call failed, ret: {}".format(ret),
+                'Check the parameters')
         return False
 
 
 def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
     if iostatus != Txn.IO_OK:
-        logger.error("DNS_E2", "Dns response IO error: {}".format(iostatus))
+        logger.error(
+                "DNS_E2", "Dns response IO error: {}".format(iostatus),
+                '')
         return False
 
     sharedData = txn.data()

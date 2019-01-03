@@ -1,11 +1,7 @@
 import pprint
 import time
 
-from dnslib import DNSRecord
-from dnslib import QTYPE
-from dnslib import RR
-from dnslib import A
-from dnslib import AAAA
+from dnslib import AAAA, QTYPE, RR, A, DNSRecord
 from skull import logger
 from skull.txn import Txn
 
@@ -62,10 +58,9 @@ def module_pack(txn, txndata):
     if txn.status() != Txn.TXN_OK:
         logger.error(
             'ModulePack',
-            'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type:\
-            {}'
-            .format(question, peerName, peerPort, peerType,
-                    qtype), 'Please check previous errors/exceptions')
+            'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type:'
+            ' {}'.format(question, peerName, peerPort, peerType,
+                         qtype), 'Please check previous errors/exceptions')
 
         # Increase error counter
         module_counter.error.inc(1)
@@ -106,9 +101,9 @@ def module_pack(txn, txndata):
         logger.info(
             'ModulePack',
             'Peer: {}:{} {} ,Duration: {:.3f} ms ,filtered: {} ,Question: {} '
-            ',type: {}, {} Answers: {}'
-            .format(peerName, peerPort, peerType, duration, nFiltered,
-                    question, qtype, nAnswers, ips))
+            ',type: {}, {} Answers: {}'.format(peerName, peerPort, peerType,
+                                               duration, nFiltered, question,
+                                               qtype, nAnswers, ips))
 
     txndata.append(bytes(answer.pack()))
 
