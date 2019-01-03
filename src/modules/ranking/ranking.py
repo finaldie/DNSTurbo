@@ -98,7 +98,7 @@ def rank(scoringResults, low_latency_bar, latency_factor):
             rankingResults.append(scoringRecord)
         else:
             logger.info(
-                "{RankingUtil}",
+                "RankingUtil",
                 "Ranking terminated at latency: {}, factor: {}, base: {}".
                 format(latency, factor, baseRecordLatency))
             break
