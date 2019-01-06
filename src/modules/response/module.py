@@ -58,9 +58,9 @@ def module_pack(txn, txndata):
     if txn.status() != Txn.TXN_OK:
         logger.error(
             'ModulePack',
-            'Error occurred, no answer for question: {} ,Peer: {}:{} {} ,type:'
-            ' {}'.format(question, peerName, peerPort, peerType,
-                         qtype), 'Please check previous errors/exceptions')
+            'no answer for question: {} ,Peer: {}:{} {} ,type: {}'.format(
+                question, peerName, peerPort, peerType,
+                qtype), 'Please check previous errors/exceptions')
 
         # Increase error counter
         module_counter.error.inc(1)
