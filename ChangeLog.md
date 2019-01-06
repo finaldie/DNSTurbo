@@ -1,5 +1,6 @@
 - 2019-01-02 0.9.1
   - Refine logs
+  - Upgrade `skull` to 1.5.1
 - 2019-01-01 0.8.3
   - Upgrade `skull` to 1.4.3
   - Refine python style
