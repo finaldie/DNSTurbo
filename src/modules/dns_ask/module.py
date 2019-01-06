@@ -51,15 +51,15 @@ def module_run(txn: Txn):
     else:
         logger.error(
                 "DNS_E1", "Dns call failed, ret: {}".format(ret),
-                'Check the parameters')
+                'Check the parameters of service call')
         return False
 
 
 def _dns_response(txn, iostatus, api_name, request_msg, response_msg):
     if iostatus != Txn.IO_OK:
         logger.error(
-                "DNS_E2", "Dns response IO error: {}".format(iostatus),
-                '')
+                "DNS_E2", "Service Busy. err code: {}.".format(iostatus),
+                'Consider to increase the service queue length')
         return False
 
     sharedData = txn.data()
